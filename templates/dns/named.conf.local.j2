@@ -1,0 +1,15 @@
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+include "/etc/bind/zones.rfc1918";
+ 
+{% for zone in dns_zones %} 
+zone "{{ zone.name }}" {
+	type {{ zone.type }};
+	file "db.{{ zone.name }}";
+	notify {{ zone.notify }};
+	allow-transfer { 
+	{% for acl in zone.allow_transfer_from %}
+		{{ acl }};	{% endfor %} 
+	}; 
+};
+{% endfor %}

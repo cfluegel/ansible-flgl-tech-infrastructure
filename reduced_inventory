@@ -1,0 +1,6 @@
+all:
+  children: 
+    dns: 
+      hosts: 
+        dns1.flgl.tech
+

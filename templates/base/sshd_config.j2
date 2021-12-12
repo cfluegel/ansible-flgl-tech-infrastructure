@@ -1,0 +1,106 @@
+# Ansible Template file for the SSHD configuration 
+# At this stage there are no variables for a templating present, 
+# but I intent to change it for some parameters if necessary. 
+
+# Majority of this settings are taken from the Debian 11 default configuration
+### Changed settings are in the next section 
+PasswordAuthentication no
+PermitRootLogin without-password 
+DebianBanner no
+PrintMotd no
+GSSAPIAuthentication no
+KerberosAuthentication no
+PermitEmptyPasswords no
+Protocol 2
+ClientAliveInterval 600
+X11Forwarding no
+PermitUserEnvironment no
+AcceptEnv LANG LC_*
+
+### Unmodified from the default configuration file 
+#Port 22
+#AddressFamily any
+#ListenAddress 0.0.0.0
+#ListenAddress ::
+ 
+#HostKey /etc/ssh/ssh_host_rsa_key
+#HostKey /etc/ssh/ssh_host_ecdsa_key
+#HostKey /etc/ssh/ssh_host_ed25519_key
+ 
+# Ciphers and keying
+#RekeyLimit default none
+ 
+# Logging
+#SyslogFacility AUTH
+#LogLevel INFO
+ 
+# Authentication:
+ 
+#LoginGraceTime 2m
+#StrictModes yes
+#MaxAuthTries 6
+#MaxSessions 10
+ 
+#PubkeyAuthentication yes
+ 
+# Expect .ssh/authorized_keys2 to be disregarded by default in future.
+#AuthorizedKeysFile	.ssh/authorized_keys .ssh/authorized_keys2
+ 
+#AuthorizedPrincipalsFile none
+ 
+#AuthorizedKeysCommand none
+#AuthorizedKeysCommandUser nobody
+ 
+# For this to work you will also need host keys in /etc/ssh/ssh_known_hosts
+#HostbasedAuthentication no
+# Change to yes if you don't trust ~/.ssh/known_hosts for
+# HostbasedAuthentication
+#IgnoreUserKnownHosts no
+# Don't read the user's ~/.rhosts and ~/.shosts files
+#IgnoreRhosts yes
+ 
+# To disable tunneled clear text passwords, change to no here!
+ 
+# Change to yes to enable challenge-response passwords (beware issues with
+# some PAM modules and threads)
+ChallengeResponseAuthentication no
+ 
+# Kerberos options
+#KerberosOrLocalPasswd yes
+#KerberosTicketCleanup yes
+#KerberosGetAFSToken no
+ 
+# GSSAPI options
+#GSSAPICleanupCredentials yes
+#GSSAPIStrictAcceptorCheck yes
+#GSSAPIKeyExchange no
+ 
+# Set this to 'yes' to enable PAM authentication, account processing,
+# and session processing. If this is enabled, PAM authentication will
+# be allowed through the ChallengeResponseAuthentication and
+# PAM authentication via ChallengeResponseAuthentication may bypass
+# If you just want the PAM account and session checks to run without
+# and ChallengeResponseAuthentication to 'no'.
+UsePAM yes
+ 
+#AllowAgentForwarding yes
+#AllowTcpForwarding yes
+#GatewayPorts no
+#X11DisplayOffset 10
+#X11UseLocalhost yes
+#PermitTTY yes
+#PrintLastLog yes
+#TCPKeepAlive yes
+#Compression delayed
+#ClientAliveCountMax 3
+#UseDNS no
+#PidFile /var/run/sshd.pid
+#MaxStartups 10:30:100
+#PermitTunnel no
+#ChrootDirectory none
+#VersionAddendum none
+ 
+ 
+# override default of no subsystems
+Subsystem	sftp	/usr/lib/openssh/sftp-server
+ 

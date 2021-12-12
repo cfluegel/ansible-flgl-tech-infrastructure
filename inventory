@@ -1,0 +1,12 @@
+all:
+  children: 
+    dns: 
+      hosts: 
+        dns1.flgl.tech
+    mailserver: 
+      hosts: 
+        mail.flgl.tech 
+    webserver:
+      hosts: 
+        web1.flgl.tech 
+

@@ -1,0 +1,6 @@
+*.retry
+*.swp
+test/*
+test.yml
+test?.yml
+tmp/*

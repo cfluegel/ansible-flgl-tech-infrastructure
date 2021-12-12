@@ -1,0 +1,48 @@
+---
+- hosts: all 
+  remote_user: root 
+
+  tasks: 
+    - name: Deploy SSH Keys to root 
+      ansible.posix.authorized_key: 
+        user: root 
+        state: present 
+        key: '{{ item }}'
+      with_file:
+        - sshpubkeys/sshgpgkey1
+        - sshpubkeys/sshgpgkey2
+        - sshpubkeys/defaultkey1
+        - sshpubkeys/cfluegelmacmine1
+    
+    - name: Deploy a sshd configuration 
+      ansible.builtin.template:
+        src: base/sshd_config.j2 
+        dest: /etc/ssh/sshd_config
+        group: root 
+        owner: root 
+        mode: 0644
+      notify:
+        - Restart sshd 
+
+    - name: Set Timezone to UTC 
+      community.general.timezone:
+        name: Etc/UTC
+
+    - name: Update and Upgrade Packages
+      ansible.builtin.apt: 
+        update_cache: yes
+        upgrade: safe 
+
+    - name: Install some useful packages 
+      ansible.builtin.apt:
+        state: present 
+        pkg: 
+          - htop 
+          - git 
+          - neovim 
+
+  handlers:
+    - name: Restart sshd 
+      ansible.builtin.service:
+        name: sshd 
+        state: restarted 

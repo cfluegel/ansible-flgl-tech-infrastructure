@@ -1,0 +1,31 @@
+$TTL 3600
+@   IN  SOA   {{ ansible_fqdn }}. {{ dns_mailadmin | replace('@','.') }}. (
+          {{ item.versionnumber }}  
+          {{ item.refresh | default(dns_default_refresh) }}  
+          {{ item.retry | default(dns_default_retry) }}  
+          {{ item.expire | default(dns_default_expire) }} 
+          {{ item.negative_ttl | default(dns_default_negativ_ttl )   
+
+@                 IN NS       {{ ansible_fqdn }}.
+
+; Hetzner Hostname nach Kauf zusaetzlicher Domain Option
+@                 IN NS       ns1.first-ns.de.
+@                 IN NS       robotns2.second-ns.de.
+@                 IN NS       robotns3.second-ns.com.
+
+; Mail Einstellungen fuer die Domain (Stand: March 2019)
+@                 IN MX 10    mail.speicherzugriffsfehler.de.
+@                 IN TXT      "v=spf1 include:speicherzugriffsfehler.de ?all"
+_dmarc            IN TXT      "v=DMARC1; p=reject"
+2018._domainkey   IN TXT      (
+                               "v=DKIM1;k=rsa;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyG7bsO9"
+                               "MMMWNXk9exwHqcT7miakfJ3zFBL+EdanbVLZjdAAbftc0OljpqOUTRP0HT/k1kuv638"
+                               "6EGhNo5HALwL+T4UaZtLUBoThI6DVJiICiQtxbyjhEKgiT2xz/6wlT2ettmC2qUvEI5"
+                               "ZxHqnUKkcKcVHgtaOyxsXWbYkqPjIYvCzs4WrV81I82iEQDzE8cU93RMhGXv84roUhU"
+                               "ECd9vRi39umsm8sy4RMnvUCXUUCNElANUQ25J+dlc7OKUq8mbABT+0Ka0a7NuyorI9P"
+                               "cqi+UJ+3xKM8MnGWjSZhyBpk3SnEzYFKY3xlsApAD9hIYiKDZRYNaLVCAeqiS9ppAuw"
+                               "IDAQAB")
+
+{% for entry in item.entries %}
+{{ entry }} 
+{% endfor %}

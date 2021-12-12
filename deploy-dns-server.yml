@@ -1,0 +1,55 @@
+---
+- hosts: dns 
+  remote_user: root 
+
+  tasks: 
+    - name: Update and upgrade system 
+      ansible.builtin.apt:
+        update_cache: yes 
+        upgrade: safe
+      tags:
+        - installation
+      
+    - name: Install of BIND packages 
+      ansible.builtin.apt: 
+        state: latest 
+        pkg:
+          - bind9
+          - bind9-host
+          - bind9utils
+          - dnsutils
+      tags: 
+        - installation
+
+    - name: Deploy named.conf.options 
+      ansible.builtin.template: 
+        src: dns/named.conf.options.j2
+        dest: /etc/bin/named.conf.options
+        owner: root 
+        group: bind  
+        mode: 0644
+      tags:
+        - configuration 
+
+    - name: Deploy named.conf.local f
+      ansible.builtin.template:
+        src: dns/named.conf.local.j2 
+        dest: /etc/bind/named.conf.local
+        owner: root 
+        group: bind 
+        mode: 0644
+      tags:
+        - configuration
+
+    - name: Deploy named.conf.local f
+      ansible.builtin.template:
+        src: dns/zonefile-master.j2 
+        dest: /var/cache/bind/db.{{ item.name }}
+        owner: root 
+        group: bind 
+        mode: 0644
+      with_items: "{{ dns_zones }}"
+      tags:
+        - configuration
+      
+
