@@ -1,10 +1,35 @@
+{% if item.versionnumber is defined %}
+{% set versionnumber = item.versionnumber %}
+{% else %}
+{% set versionnumber =  now(fmt="%Y%m%d%M%S") %}
+{% endif %}
+{% if item.refresh is defined %}
+{% set refresh = item.refresh %}
+{% else %}
+{% set refresh =  dns_default_refresh %}
+{% endif %}
+{% if item.retry is defined %}
+{% set retry = item.retry %}
+{% else %}
+{% set retry =  dns_default_retry %}
+{% endif %}
+{% if item.expire is defined %}
+{% set expire = item.expire %}
+{% else %}
+{% set expire =  dns_default_expire %}
+{% endif %}
+{% if item.negativ_ttl is defined %}
+{% set negativ_ttl = item.negativ_ttl %}
+{% else %}
+{% set negativ_ttl =  dns_default_negativ_ttl %}
+{% endif %}
 $TTL 3600
 @   IN  SOA   {{ ansible_fqdn }}. {{ dns_mailadmin | replace('@','.') }}. (
-          {{ item.versionnumber }}  
-          {{ item.refresh | default(dns_default_refresh) }}  
-          {{ item.retry | default(dns_default_retry) }}  
-          {{ item.expire | default(dns_default_expire) }} 
-          {{ item.negative_ttl | default(dns_default_negativ_ttl )   
+          {{ versionnumber }}  
+          {{ refresh }}  
+          {{ retry }}  
+          {{ expire }} 
+          {{ negativ_ttl }} )   
 
 @                 IN NS       {{ ansible_fqdn }}.
 
@@ -26,6 +51,8 @@ _dmarc            IN TXT      "v=DMARC1; p=reject"
                                "cqi+UJ+3xKM8MnGWjSZhyBpk3SnEzYFKY3xlsApAD9hIYiKDZRYNaLVCAeqiS9ppAuw"
                                "IDAQAB")
 
+{% if item.entries is defined %}
 {% for entry in item.entries %}
 {{ entry }} 
 {% endfor %}
+{% endif %}

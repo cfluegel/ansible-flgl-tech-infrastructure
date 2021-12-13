@@ -1,14 +1,14 @@
 ---
 dns_zones:
-    - name: "ow8.de"
-        type: "master"
-        allow_transfer_from: 
-          - hetzner
-        notify: yes 
-    - name: "fluegel.name"
-        type: "master"
-        allow_transfer_from: 
-          - hetzner
-        notify: yes  
-        entries:
-          - "test IN A 127.0.0.1"
+  - name: "ow8.de"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes 
+  - name: "fluegel.name"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes  
+    entries:
+      - "test IN A 127.0.0.1"
