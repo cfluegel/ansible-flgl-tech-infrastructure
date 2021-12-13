@@ -12,7 +12,7 @@
         - sshpubkeys/sshgpgkey1
         - sshpubkeys/sshgpgkey2
         - sshpubkeys/defaultkey1
-        - sshpubkeys/cfluegelmacmine1
+        - sshpubkeys/cfluegelmacmini1
     
     - name: Deploy a sshd configuration 
       ansible.builtin.template:
@@ -40,6 +40,7 @@
           - htop 
           - git 
           - neovim 
+          - python3 
 
   handlers:
     - name: Restart sshd 
