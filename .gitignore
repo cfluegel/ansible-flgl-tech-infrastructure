@@ -2,5 +2,6 @@
 *.swp
 test/*
 test.yml
+test-*.yml
 test?.yml
 tmp/*
