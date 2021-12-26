@@ -13,6 +13,9 @@
         - sshpubkeys/sshgpgkey2
         - sshpubkeys/defaultkey1
         - sshpubkeys/cfluegelmacmini1
+      tags:
+        - configuration
+        - ssh 
     
     - name: Deploy a sshd configuration 
       ansible.builtin.template:
@@ -23,15 +26,24 @@
         mode: 0644
       notify:
         - Restart sshd 
+      tags: 
+        - configuration
+        - ssh 
 
     - name: Set Timezone to UTC 
       community.general.timezone:
         name: Etc/UTC
+      tags:
+        - configuration 
+        - system
 
     - name: Update and Upgrade Packages
       ansible.builtin.apt: 
         update_cache: yes
         upgrade: safe 
+      tags: 
+        - installation
+        - packages
 
     - name: Install some useful packages 
       ansible.builtin.apt:
@@ -41,11 +53,19 @@
           - git 
           - neovim 
           - python3 
+          - ufw
+          - fail2ban
+      tags:
+        - installation
+        - packages
    
     - name: Set hostname to inventory hostname
       ansible.builtin.hostname:
-        name: {{ inventory_hostname }}
+        name: "{{ inventory_hostname }}" 
       when: inventory_hostname != ansible_hostname
+      tags: 
+        - configuration 
+        - hostname
 
     - name: Reboot because of name change
       ansible.builtin.reboot:
@@ -56,7 +76,46 @@
         post_reboot_delay: 30
         test_command: whoami  
       when: inventory_hostname != ansible_hostname
-        
+      tags: 
+        - configuration 
+        - hostname 
+
+    - name: Verify that the server is set to the inventory
+      debug:
+        msg: "Server FQDN is: '{{ ansible_hostname }}'"
+    
+    - name: Allow SSH (22) through the firewall 
+      community.general.ufw:
+        rule: allow 
+        port: '22' 
+        proto: tcp
+      tags:
+        - configuration
+        - firewall  
+      
+    - name: Allow all outgoing default 
+      community.general.ufw:
+        direction: outgoing 
+        default: allow 
+      tags:
+        - configuration
+        - firewall 
+
+    - name: Disallow all incoming except the allowed services 
+      community.general.ufw:
+        direction: incoming
+        default: deny 
+      tags:
+        - configuration
+        - firewall 
+
+    - name: Enable UFW
+      community.general.ufw: 
+        state: enabled 
+      tags:
+        - configuration
+        - firewall 
+
   handlers:
     - name: Restart sshd 
       ansible.builtin.service:
