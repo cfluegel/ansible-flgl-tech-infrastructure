@@ -8,5 +8,12 @@ all:
         mail.flgl.tech 
     webserver:
       hosts: 
-        web1.flgl.tech 
+        web1.flgl.tech
+        www.fluegel.cloud
+    nextcloud:
+      hosts:
+        www.fluegel.cloud
+    www-multi-tannant:
+      hosts:
+        web1.flgl.tech
 

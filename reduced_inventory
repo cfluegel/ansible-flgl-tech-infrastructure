@@ -3,4 +3,9 @@ all:
     dns: 
       hosts: 
         dns1.flgl.tech
-
+    webserver:
+      hosts: 
+        www.fluegel.cloud
+    nextcloud:
+      hosts:
+        www.fluegel.cloud
