@@ -1,4 +1,11 @@
 ---
+dns_mailadmin: "dnsadmin@speicherzugriffsfehler.de"
+
+dns_default_refresh: 43200
+dns_default_retry: 3600
+dns_default_expire: 604800
+dns_default_negativ_ttl: 3600
+
 dns_acls:
   - name: hetzner
     hosts: 
@@ -6,10 +13,9 @@ dns_acls:
       - 213.133.105.6
       - 193.47.99.3
 
-dns_mailadmin: "dnsadmin@speicherzugriffsfehler.de"
+slave_servers:
+  - "ns1.first-ns.de"
+  - "robotns2.second-ns.de"
+  - "robotns3.second-ns.com"
 
-dns_default_refresh: 43200
-dns_default_retry: 3600
-dns_default_expire: 604800
-dns_default_negativ_ttl: 3600
 

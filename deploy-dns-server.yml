@@ -9,6 +9,7 @@
         upgrade: safe
       tags:
         - installation
+        - packages
       
     - name: Install of BIND packages 
       ansible.builtin.apt: 
@@ -20,17 +21,7 @@
           - dnsutils
       tags: 
         - installation
-
-    - name: Create directory for log fies 
-      ansible.builtin.file:
-        state: directory 
-        path: /var/log/bind
-        mode: '0744' 
-        owner: bind
-        group: bind 
-      tags:
-        - installation
-        - configuration
+        - packages
 
     - name: Display the dns_zones 
       debug:
@@ -68,6 +59,46 @@
       when: 
         - debug_vars 
 
+    - name: Create directory for log fies 
+      ansible.builtin.file:
+        state: directory 
+        path: /var/log/named
+        mode: '0774' 
+        owner: bind
+        group: bind 
+      tags:
+        - installation
+        - configuration
+
+    - name: Create Log files 
+      ansible.builtin.file:
+        group: bind 
+        owner: bind 
+        state: touch 
+        mode: '0660'
+        path: "{{ item }}"
+      with_items:
+        - /var/log/named/default.log
+        - /var/log/named/general.log
+        - /var/log/named/database.log
+        - /var/log/named/security.log
+        - /var/log/named/config.log
+        - /var/log/named/resolver.log
+        - /var/log/named/xfer-in.log
+        - /var/log/named/xfer-out.log
+        - /var/log/named/notify.log
+        - /var/log/named/client.log
+        - /var/log/named/unmatched.log
+        - /var/log/named/queries.log
+        - /var/log/named/network.log
+        - /var/log/named/update.log
+        - /var/log/named/dispatch.log
+        - /var/log/named/dnssec.log
+        - /var/log/named/lame-servers.log
+      tags:
+        - installation
+        - configurationa
+
     - name: Deploy named.conf.options 
       ansible.builtin.template: 
         src: dns/named.conf.options.j2
@@ -75,8 +106,11 @@
         owner: root 
         group: bind  
         mode: '0644'
+      notify: 
+        - Restart bind 
       tags:
-        - configuration 
+        - configuration
+
 
     - name: Deploy named.conf.local 
       ansible.builtin.template:
@@ -85,8 +119,11 @@
         owner: root 
         group: bind 
         mode: '0644'
+      notify: 
+        - Restart bind 
       tags:
         - configuration
+
 
     - name: Deploy individual zone files
       ansible.builtin.template:
@@ -96,7 +133,40 @@
         group: bind 
         mode: '0644'
       with_items: "{{ dns_zones }}"
+      notify: 
+        - Restart bind 
       tags:
         - configuration
         - zonefiles
 
+    
+    - name: UFW Add firewall rule for DNS port 53 (tcp)
+      community.general.ufw:
+        rule: allow 
+        port: '53'
+        proto: tcp 
+      tags: 
+        - configuration
+        - firewall 
+
+    - name: UFW Add firewall rule for DNS port 53 (tcp)
+      community.general.ufw:
+        rule: allow 
+        port: '53'
+        proto: udp
+      tags: 
+        - configuration 
+        - firewall 
+    
+    - name: UFW Reload 
+      community.general.ufw:
+        state: reloaded
+      tags:
+        - configuration
+        - firewall 
+        
+  handlers:
+    - name: Restart bind 
+      ansible.builtin.service:
+        name: bind9
+        state: restarted 

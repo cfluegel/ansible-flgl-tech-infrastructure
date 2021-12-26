@@ -1,7 +1,7 @@
 {% if item.versionnumber is defined %}
 {% set versionnumber = item.versionnumber %}
 {% else %}
-{% set versionnumber =  now(fmt="%Y%m%d%M%S") %}
+{% set versionnumber =  now(fmt="%Y%m%d%M") %}
 {% endif %}
 {% if item.refresh is defined %}
 {% set refresh = item.refresh %}
@@ -23,6 +23,11 @@
 {% else %}
 {% set negativ_ttl =  dns_default_negativ_ttl %}
 {% endif %}
+{% if item.slave_servers is defined %}
+{% set slaveservers = item.slave_servers %} 
+{% else %} 
+{% set slaveservers = slave_servers %}
+{% endif %}
 $TTL 3600
 @   IN  SOA   {{ ansible_fqdn }}. {{ dns_mailadmin | replace('@','.') }}. (
           {{ versionnumber }}  
@@ -31,12 +36,13 @@ $TTL 3600
           {{ expire }} 
           {{ negativ_ttl }} )   
 
+; Server Adresse von diesem Server 
 @                 IN NS       {{ ansible_fqdn }}.
 
 ; Hetzner Hostname nach Kauf zusaetzlicher Domain Option
-@                 IN NS       ns1.first-ns.de.
-@                 IN NS       robotns2.second-ns.de.
-@                 IN NS       robotns3.second-ns.com.
+{% for server in slaveservers %}
+@                 IN NS       {{ server }}. 
+{% endfor %}
 
 ; Mail Einstellungen fuer die Domain (Stand: March 2019)
 @                 IN MX 10    mail.speicherzugriffsfehler.de.

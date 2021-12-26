@@ -5,10 +5,113 @@ dns_zones:
     allow_transfer_from: 
       - hetzner
     notify: yes 
-  - name: "fluegel.name"
+  - name: "0fk.net"
     type: "master"
     allow_transfer_from: 
       - hetzner
-    notify: yes  
+    notify: yes 
+  - name: "j1n.net"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes   
     entries:
-      - "test IN A 127.0.0.1"
+      - "chat IN A 185.233.106.80"
+      - "chat IN AAAA 2a04:4000:24:7ab:482a:4bff:fe1d:3907"
+  - name: "wxmn.net"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes
+  - name: "darc-e10.de"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes 
+    entries:
+      - "@ IN A 136.243.155.190"
+      - "www IN A 136.243.155.190" 
+  - name: "echo10.de"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes 
+    entries:
+      - "@ IN A 136.243.155.190"
+      - "www IN A 136.243.155.190" 
+  - name: "fluffyunicorn.de"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes 
+  - name: "digitalmonk.de"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes 
+  - name: "xn--ns-wia.de"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes 
+  - name: "xn--christophflgel-qsb.de"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes 
+  - name: "xn--appel-in-neumnster-y6b.de"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes 
+  - name: "xn--appel-aus-neumnster-jbc.de"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes 
+  - name: "uucptest.de"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes 
+  - name: "uucpmail.de"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes 
+  - name: "paarschiffen.de"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes 
+  - name: "paar-schiffen.de"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes 
+  - name: "dl2chf.de"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes 
+  - name: "christophfluegel.de"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes 
+  - name: "apple-family.de"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes 
+  - name: "appel-in-nms.de"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes 
+  - name: "appel-aus-nms.de"
+    type: "master"
+    allow_transfer_from: 
+      - hetzner
+    notify: yes 
+
