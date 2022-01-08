@@ -1,0 +1,112 @@
+---
+- hosts: all 
+  remote_user: root 
+  
+  tasks: 
+    - name: Update and Upgrade Packages
+      ansible.builtin.apt: 
+        update_cache: yes
+        upgrade: safe 
+      tags: 
+        - installation
+        - packages
+
+    - name: Install some useful packages 
+      ansible.builtin.apt:
+        state: present 
+        pkg: 
+          - ufw
+      tags:
+        - installation
+        - packages
+
+    - name: Allow SSH (22) through the firewall 
+      community.general.ufw:
+        rule: allow 
+        port: '22' 
+        proto: tcp
+      tags:
+        - configuration
+        - firewall  
+      
+    - name: Allow all outgoing default 
+      community.general.ufw:
+        direction: outgoing 
+        default: allow 
+      tags:
+        - configuration
+        - firewall 
+
+    - name: Disallow all incoming except the allowed services 
+      community.general.ufw:
+        direction: incoming
+        default: deny 
+      tags:
+        - configuration
+        - firewall 
+
+    - name: Enable UFW
+      community.general.ufw: 
+        state: enabled 
+      tags:
+        - configuration
+        - firewall 
+
+- hosts: dns
+  remote_user: root 
+
+  tasks: 
+    - name: UFW Add firewall rule for DNS port 53 (tcp)
+      community.general.ufw:
+        rule: allow 
+        port: '53'
+        proto: tcp 
+      tags: 
+        - configuration
+        - firewall 
+
+    - name: UFW Add firewall rule for DNS port 53 (tcp)
+      community.general.ufw:
+        rule: allow 
+        port: '53'
+        proto: udp
+      tags: 
+        - configuration 
+        - firewall 
+    
+    - name: UFW Reload 
+      community.general.ufw:
+        state: reloaded
+      tags:
+        - configuration
+        - firewall 
+
+- hosts: webserver
+  remote_user: root 
+  
+  tasks: 
+    - name: UFW Add firewall rule to allow http 
+      community.general.ufw:
+        rule: allow 
+        port: '80'
+        proto: tcp 
+      tags: 
+        - configuration
+        - firewall 
+
+    - name: UFW Add firewall rule to allow https
+      community.general.ufw:
+        rule: allow 
+        port: '443'
+        proto: tcp 
+      tags: 
+        - configuration
+        - firewall 
+    
+    - name: UFW Reload 
+      community.general.ufw:
+        state: reloaded
+      tags:
+        - configuration
+        - firewall 
+    

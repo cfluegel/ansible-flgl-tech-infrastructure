@@ -139,32 +139,6 @@
         - configuration
         - zonefiles
 
-    
-    - name: UFW Add firewall rule for DNS port 53 (tcp)
-      community.general.ufw:
-        rule: allow 
-        port: '53'
-        proto: tcp 
-      tags: 
-        - configuration
-        - firewall 
-
-    - name: UFW Add firewall rule for DNS port 53 (tcp)
-      community.general.ufw:
-        rule: allow 
-        port: '53'
-        proto: udp
-      tags: 
-        - configuration 
-        - firewall 
-    
-    - name: UFW Reload 
-      community.general.ufw:
-        state: reloaded
-      tags:
-        - configuration
-        - firewall 
-        
   handlers:
     - name: Restart bind 
       ansible.builtin.service:
