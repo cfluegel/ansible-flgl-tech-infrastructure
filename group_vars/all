@@ -1,7 +1,7 @@
 ---
 debug_vars: False
 
-certbot_install_method: source 
+certbot_install_method: package 
 certbot_create_if_missing: True
 certbot_admin_email: certbot@speicherzugriffsfehler.de
 certbot_create_method: standalone
