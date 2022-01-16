@@ -1,3 +1,6 @@
 [submodule "secrets"]
 	path = secrets
 	url = git@github.com:cfluegel/flgl-tech-infrastructure-secret.git
+[submodule "roles/mailserver"]
+	path = roles/mailserver
+	url = git@github.com:cfluegel/ansible-role-mailserver.git
