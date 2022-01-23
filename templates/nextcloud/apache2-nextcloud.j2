@@ -1,0 +1,29 @@
+<VirtualHost *:80>
+  ServerName  {{ inventory_hostname }}
+  Redirect / https://{{ inventory_hostname }}/
+</VirtualHost>
+
+<IfModule mod_ssl.c>
+  <VirtualHost *:443>
+    ServerName  {{ inventory_hostname }}
+    DocumentRoot /var/www/nextcloud/
+    <IfModule mod_headers.c> 
+      Header always set Strict-Transport-Security "max-age=15552000; includeSubDomains"
+    </IfModule>
+
+    SSLCertificateFile	/etc/letsencrypt/live/{{ inventory_hostname }}/cert.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/{{ inventory_hostname }}/privkey.pem
+    SSLCertificateChainFile /etc/letsencrypt/live/{{ inventory_hostname }}/fullchain.pem
+
+    <Directory /var/www/nextcloud/>
+      Require all granted
+      AllowOverride All
+      Options FollowSymLinks MultiViews
+    </Directory>
+
+    <IfModule mod_dav.c>
+      Dav off
+    </IfModule>
+    
+  </VirtualHost>
+</IfModule>
