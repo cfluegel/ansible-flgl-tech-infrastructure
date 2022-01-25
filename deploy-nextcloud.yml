@@ -332,6 +332,27 @@
         - configuration
         - nextcloud
 
+    - name: Set the cron type to system cron  
+      ansible.builtin.shell: 
+        chdir: /var/www/nextcloud
+        cmd: 'php /var/www/nextcloud/occ config:app:set core backgroundjobs_mode --value="cron"'
+      become: true
+      become_user: www-data 
+      tags:
+        - configuration
+        - nextcloud
+
+    - name: Put Cron into place 
+      ansible.builtin.cron:
+        name: Nextcloud Cron 
+        user: www-data 
+        minute: "*/5"
+        job: "php --define apc.enable_cli=1 -f /var/www/nextcloud/cron.php"
+      tags:
+        - configuration
+        - nextcloud 
+        - cron
+        
     - name: Configure memcache to APCu 
       ansible.builtin.shell: 
         chdir: /var/www/nextcloud
