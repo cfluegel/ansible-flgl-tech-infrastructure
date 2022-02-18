@@ -1,19 +1,17 @@
 all:
-  children: 
-    dns: 
-      hosts: 
+  children:
+    dns:
+      hosts:
         dns1.flgl.tech
-    mailserver: 
-      hosts: 
-        mail.flgl.tech 
-    webserver:
-      hosts: 
-        web1.flgl.tech
-        www.fluegel.cloud
+    mailserver:
+      hosts:
+        mail.flgl.tech
+    matrix:
+      hosts:
+        matrix.flgl.tech
     nextcloud:
       hosts:
         www.fluegel.cloud
     www-multi-tannant:
       hosts:
         web1.flgl.tech
-

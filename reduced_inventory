@@ -1,14 +1,15 @@
+---
 all:
   children:
     mailserver:
       hosts:
         mail.flgl.tech
-    dns: 
-      hosts: 
+    dns:
+      hosts:
         dns1.flgl.tech
-    webserver:
-      hosts: 
-        www.fluegel.cloud
     nextcloud:
       hosts:
         www.fluegel.cloud
+    matrix:
+      hosts:
+        matrix.flgl.tech
