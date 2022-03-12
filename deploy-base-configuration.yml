@@ -1,12 +1,12 @@
 ---
-- hosts: all 
-  remote_user: root 
+- hosts: all
+  remote_user: root
 
-  tasks: 
-    - name: Deploy SSH Keys to root 
-      ansible.posix.authorized_key: 
-        user: root 
-        state: present 
+  tasks:
+    - name: Deploy SSH Keys to root
+      ansible.posix.authorized_key:
+        user: root
+        state: present
         key: '{{ item }}'
       with_file:
         - sshpubkeys/sshgpgkey1
@@ -15,56 +15,57 @@
         - sshpubkeys/cfluegelmacmini1
       tags:
         - configuration
-        - ssh 
-    
-    - name: Deploy a sshd configuration 
+        - ssh
+
+    - name: Deploy a sshd configuration
       ansible.builtin.template:
-        src: base/sshd_config.j2 
+        src: base/sshd_config.j2
         dest: /etc/ssh/sshd_config
-        group: root 
-        owner: root 
+        group: root
+        owner: root
         mode: 0644
       notify:
-        - Restart sshd 
-      tags: 
+        - Restart sshd
+      tags:
         - configuration
-        - ssh 
+        - ssh
 
-    - name: Set Timezone to UTC 
+    - name: Set Timezone to UTC
       community.general.timezone:
         name: Etc/UTC
       tags:
-        - configuration 
+        - configuration
         - system
 
     - name: Update and Upgrade Packages
-      ansible.builtin.apt: 
-        update_cache: yes
-        upgrade: safe 
-      tags: 
-        - installation
-        - packages
-
-    - name: Install some useful packages 
       ansible.builtin.apt:
-        state: present 
-        pkg: 
-          - htop 
-          - git 
-          - neovim 
-          - python3 
-          - ufw
-          - fail2ban
+        update_cache: yes
+        upgrade: safe
       tags:
         - installation
         - packages
-   
+
+    - name: Install some useful packages
+      ansible.builtin.apt:
+        state: present
+        pkg:
+          - htop
+          - git
+          - neovim
+          - python3
+          - ufw
+          - fail2ban
+          - curl
+      tags:
+        - installation
+        - packages
+
     - name: Set hostname to inventory hostname
       ansible.builtin.hostname:
-        name: "{{ inventory_hostname }}" 
+        name: "{{ inventory_hostname }}"
       when: inventory_hostname != ansible_hostname
-      tags: 
-        - configuration 
+      tags:
+        - configuration
         - hostname
 
     - name: Reboot because of name change
@@ -74,18 +75,18 @@
         reboot_timeout: 600
         pre_reboot_delay: 0
         post_reboot_delay: 30
-        test_command: whoami  
+        test_command: whoami
       when: inventory_hostname != ansible_hostname
-      tags: 
-        - configuration 
-        - hostname 
+      tags:
+        - configuration
+        - hostname
 
     - name: Verify that the server is set to the inventory
       debug:
         msg: "Server FQDN is: '{{ ansible_hostname }}'"
-    
+
   handlers:
-    - name: Restart sshd 
+    - name: Restart sshd
       ansible.builtin.service:
-        name: sshd 
-        state: restarted 
+        name: sshd
+        state: restarted
