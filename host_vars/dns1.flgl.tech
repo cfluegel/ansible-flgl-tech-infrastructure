@@ -2,13 +2,11 @@
 dns_zones:
   - name: "ow8.de"
     zonefile: mailcow
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
-    entries:
-      - "mail             3600 IN A 185.232.69.37"
     dkimkey:
       - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3Ni1Y02mzryup1N0f0KdnKnM3NF"
       - "QupKf8ZfrEEaGAqvnLARElk+1N0ZsPjxeS6q3qPwU/zlbHH5KuCscHOlkIrnXAkjdkkyYK4kVXsS8/r0DNCSfuFrRjTxKXEGCZV"
@@ -17,13 +15,11 @@ dns_zones:
       - "ViTHqTsX89FEhRc3ZQIDAQAB"
   - name: "0fk.net"
     zonefile: mailcow
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
-    entries:
-      - "mail             3600 IN A 185.232.69.37"
     dkimkey:
       - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6pRW2oR6hpuxlCHzEs3tP/YlyAX"
       - "Fhwac2IUGvI0sTlsYqnDZ2IRuXypQjM70SrSj7XRsl/gVDhED9BX4x//W7zj1y069OpgvslPOwkqTW8L6Ngie97Yi9ANZqBcUFU"
@@ -32,13 +28,12 @@ dns_zones:
       - "Ai+HYwCcVhgEJ8Vw/wIDAQAB"
   - name: "j1n.net"
     zonefile: mailcow
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
     entries:
-      - "mail             3600 IN A 185.232.69.37"
       - "chat IN A 185.233.106.80"
       - "chat IN AAAA 2a04:4000:24:7ab:482a:4bff:fe1d:3907"
     dkimkey:
@@ -49,13 +44,11 @@ dns_zones:
       - "7Y0pwt/Qwsfk7tqBOQIDAQAB"
   - name: "wxmn.net"
     zonefile: mailcow
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
-    entries:
-      - "mail             3600 IN A 185.232.69.37"
     dkimkey:
       - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1m+EI3N++TaQzFG8wl6rMLmTyrq"
       - "izapAN+2s7JdShH8WWKLyrDE1fqwVdARCkqFZOmYcx4lQ3K+VaEYDyNiiqt2dKxG09/BXrt2V8m6WEpqWBWRLBhR6083koOF3qa"
@@ -64,18 +57,17 @@ dns_zones:
       - "TeY5P3rHS9fsQZHUwQIDAQAB"
   - name: "darc-e10.de"
     zonefile: nomail
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
     entries:
-      - "mail             3600 IN A 185.232.69.37"
       - "@ IN A 136.243.155.190"
       - "www IN A 136.243.155.190"
   - name: "echo10.de"
     zonefile: nomail
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
@@ -85,13 +77,11 @@ dns_zones:
       - "www IN A 136.243.155.190"
   - name: "fluffyunicorn.de"
     zonefile: mailcow
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
-    entries:
-      - "mail             3600 IN A 185.232.69.37"
     dkimkey:
       - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2FOuIQsEEXzGrS4YF4ubn5uqj51"
       - "g54takWnFMJbEpYg5+9spn4cSEhRf/RXY0Qj2p700Km/RYXZpKuNAGWDIcOnGbx0lG+JpyQp2HtcFPeC5nqVHlfQlbGySEmMfnz"
@@ -100,13 +90,11 @@ dns_zones:
       - "NnLLII9mcfc+ocexMwIDAQAB"
   - name: "digitalmonk.de"
     zonefile: mailcow
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
-    entries:
-      - "mail             3600 IN A 185.232.69.37"
     dkimkey:
       - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxtbVBcHaPsCtomcus8yOVU8GePp"
       - "8H0jycaOgddteLEAtdvRAJVR2CkCjqJN/hK75nEgimG0XbFKwtNqHMpuFBtCSBdaB+VpKEWRZ0HZUg5DSoTulKLO2+KmUuxrLlD"
@@ -115,13 +103,11 @@ dns_zones:
       - "Prbpi5sa/Vod/+BwWQIDAQAB"
   - name: "xn--ns-wia.de"
     zonefile: mailcow
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
-    entries:
-      - "mail             3600 IN A 185.232.69.37"
     dkimkey:
       - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwWGYwqiufpoqSWa0UNE4eSTPLa0"
       - "W7opagmx98lgmOFXWyNxyUcO2GIwqXg0fNPsUrJpEqNXuDtwApBM5hzbeMm2E+X6WBU/IuL/gIoTdD0m8pJt8P5T2Ec3FnCCT3U"
@@ -130,7 +116,7 @@ dns_zones:
       - "NOXkTtVPfI/2yY6MgQIDAQAB"
   - name: "xn--christophflgel-qsb.de"
     zonefile: mailcow
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
@@ -143,13 +129,11 @@ dns_zones:
       - "CUL3pq4mYgyWbMlXgwIDAQAB"
   - name: "xn--appel-in-neumnster-y6b.de"
     zonefile: mailcow
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
-    entries:
-      - "mail             3600 IN A 185.232.69.37"
     dkimkey:
       - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxVUEIlnGASbMBEBzbYR4RxZwDQw"
       - "AsA22ejfb5xymAB6mEsUlg0cc+Ym+xPdlL0tZpTyvmQSAYIcnIjCZnts1WsnaHZKBvs4edAOHjlDXmaNhBbqubF0GWa0n0akUhh"
@@ -158,13 +142,11 @@ dns_zones:
       - "YEhFlihrX28H7NgrxwIDAQAB"
   - name: "xn--appel-aus-neumnster-jbc.de"
     zonefile: mailcow
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
-    entries:
-      - "mail             3600 IN A 185.232.69.37"
     dkimkey:
       - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwrt7dXpMNH84Z9zicTDL7iMfhJy"
       - "Hsx1xgIO0AUYcyuMz9XmXY4QJQoIxu0DibfO8j/Uecv+I860EG5RkJgQ0RFymwH8RopVW3ktOe0BP4roSpOsQsPHrwX3cFh/L2Q"
@@ -173,41 +155,39 @@ dns_zones:
       - "UiNf/9fHvTTzJfcIsQIDAQAB"
   - name: "uucptest.de"
     zonefile: nomail
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
   - name: "uucpmail.de"
     zonefile: nomail
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
   - name: "paarschiffen.de"
     zonefile: nomail
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
   - name: "paar-schiffen.de"
     zonefile: nomail
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
   - name: "dl2chf.de"
     zonefile: mailcow
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
-    entries:
-      - "mail             3600 IN A 185.232.69.37"
     dkimkey:
      - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzNEu76s4HMEILZiRww8EuFh+6sZv"
      - "NI8NDpWRryVbxNyhQF/brjjNW2fQF1FWjecdOLjns0zSVLMFsiEdSWwmpk3FAst1xj931W6+/+50GTkt5ZhtjHWfo0BuXI6j4VBf"
@@ -216,13 +196,11 @@ dns_zones:
      - "X7tdEaS8dkvBTwIDAQAB"
   - name: "christophfluegel.de"
     zonefile: mailcow
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
-    entries:
-      - "mail             3600 IN A 185.232.69.37"
     dkimkey:
      - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvi0EZqpTnDbb1ll4FUITCiEDfFw4"
      - "9OM8W62BlL6HRohguvmXocSYAZUwBXw0J1xlJkkDCCGs2zgwnDXn+zVGUvI1sGG63+gamqUOD6AT5tSAsrRwcqy41PL8EQgTIDl3"
@@ -231,20 +209,18 @@ dns_zones:
      - "0BLzYH0sYXTiQQIDAQAB"
   - name: "apple-family.de"
     zonefile: nomail
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
   - name: "appel-in-nms.de"
     zonefile: mailcow
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
-    entries:
-      - "mail             3600 IN A 185.232.69.37"
     dkimkey:
       - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnGEBJoxuA5mfLT06yAqYoAkQxzW"
       - "Wzxq18nlKlYnHC/93OybrD47Edv9RIRjMY8/GliI/R+29oaBPxqqH1BShy2hOmSfgK7YJjlPzyUNCZElyZf931hhdKrttw/idRF"
@@ -253,13 +229,11 @@ dns_zones:
       - "lXmmQFHYP8itOg4cxQIDAQAB"
   - name: "appel-aus-nms.de"
     zonefile: mailcow
-    versionnumber: 2022031310
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
-    entries:
-      - "mail             3600 IN A 185.232.69.37"
     dkimkey:
       - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAx9EZkllq1aCyFUQBmkG6XE6Ifaq"
       - "XXXZ7CPGTlN/spB0KuYpOV20kNv4Jzj2azO3CJOC96SCNQDmaLh8J9eXZ10BOubEGEBd1dxxcA5yOaiIz0cxeWGLVA35n8Ibr/9"
@@ -268,13 +242,11 @@ dns_zones:
       - "k1D/N6L6/oai5mPF5wIDAQAB"
   - name: "familie-appel.net"
     zonefile: mailcow
-    versionnumber: 2022031314
+    versionnumber: 2022031341
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
-    entries:
-      - "mail             3600 IN A 185.232.69.37"
     dkimkey:
       - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuf8LxBxY2MIkFm1WOJLOPUHISQFA"
       - "cBh4NYG39g4geLAnXeCytVeVsxbgHgyp3UiqBDCy8urc/zmO/BXaBlQJD8vtFWdUd0j1DkSCn8jSnUyPz7AvS75S1lgZZvWiF4CU"

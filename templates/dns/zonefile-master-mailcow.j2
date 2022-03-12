@@ -1,0 +1,81 @@
+{% if item.versionnumber is defined %}
+{% set versionnumber = item.versionnumber %}
+{% else %}
+{% set versionnumber =  now(fmt="%Y%m%d%M") %}
+{% endif %}
+{% if item.refresh is defined %}
+{% set refresh = item.refresh %}
+{% else %}
+{% set refresh =  dns_default_refresh %}
+{% endif %}
+{% if item.retry is defined %}
+{% set retry = item.retry %}
+{% else %}
+{% set retry =  dns_default_retry %}
+{% endif %}
+{% if item.expire is defined %}
+{% set expire = item.expire %}
+{% else %}
+{% set expire =  dns_default_expire %}
+{% endif %}
+{% if item.negativ_ttl is defined %}
+{% set negativ_ttl = item.negativ_ttl %}
+{% else %}
+{% set negativ_ttl =  dns_default_negativ_ttl %}
+{% endif %}
+{% if item.slave_servers is defined %}
+{% set slaveservers = item.slave_servers %}
+{% else %}
+{% set slaveservers = slave_servers %}
+{% endif %}
+$TTL 3600
+@   IN  SOA   {{ ansible_fqdn }}. {{ dns_mailadmin | replace('@','.') }}. (
+          {{ versionnumber }}
+          {{ refresh }}
+          {{ retry }}
+          {{ expire }}
+          {{ negativ_ttl }} )
+
+; Server Adresse von diesem Server
+@                 IN NS       {{ ansible_fqdn }}.
+
+; Hetzner Hostname nach Kauf zusaetzlicher Domain Option
+{% for server in slaveservers %}
+@                 IN NS       {{ server }}.
+{% endfor %}
+
+; Mailcow Maileinstellung
+@                   IN MX     10                       mail.flgl.tech.
+@                   IN TXT                             "v=spf1 mx a -all"
+
+; Mailcow Autodiscover
+autodiscover        IN CNAME                           mail.flgl.tech.
+autoconfig          IN CNAME                           mail.flgl.tech.
+
+; DMARC / DKIM
+_dmarc              IN TXT                             "v=DMARC1; p=reject; rua=mailto:cfluegel@gmail.com"
+dkim._domainkey     IN TXT  (
+{% for keyline in item.dkimkey %}
+                             "{{ keyline }}"
+{% endfor %} )
+
+_autodiscover._tcp  IN SRV     0        1      443      mail.flgl.tech.
+_caldavs._tcp       IN SRV     0        1      443      mail.flgl.tech.
+_caldavs._tcp       IN TXT                              "path=/SOGo/dav/"
+_carddavs._tcp      IN SRV     0        1      443      mail.flgl.tech.
+_carddavs._tcp      IN TXT                              "path=/SOGo/dav/"
+_imap._tcp          IN SRV     0        1      143      mail.flgl.tech.
+_imaps._tcp         IN SRV     0        1      993      mail.flgl.tech.
+_pop3._tcp          IN SRV     0        1      110      mail.flgl.tech.
+_pop3s._tcp         IN SRV     0        1      995      mail.flgl.tech.
+_sieve._tcp         IN SRV     0        1      4190     mail.flgl.tech.
+_smtps._tcp         IN SRV     0        1      465      mail.flgl.tech.
+_submission._tcp    IN SRV     0        1      587      mail.flgl.tech.
+
+
+; Weitere DNS Eintraege
+{% if item.entries is defined %}
+{% for entry in item.entries %}
+{{ entry }}
+{% endfor %}
+{% endif %}
