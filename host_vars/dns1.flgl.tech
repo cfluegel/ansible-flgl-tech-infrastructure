@@ -1,117 +1,287 @@
 ---
 dns_zones:
   - name: "ow8.de"
+    zonefile: mailcow
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes 
-  - name: "0fk.net"
-    type: "master"
-    allow_transfer_from: 
-      - hetzner
-    notify: yes 
-  - name: "j1n.net"
-    type: "master"
-    allow_transfer_from: 
-      - hetzner
-    notify: yes   
+    notify: "yes"
     entries:
+      - "mail             3600 IN A 185.232.69.37"
+    dkimkey:
+      - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3Ni1Y02mzryup1N0f0KdnKnM3NF"
+      - "QupKf8ZfrEEaGAqvnLARElk+1N0ZsPjxeS6q3qPwU/zlbHH5KuCscHOlkIrnXAkjdkkyYK4kVXsS8/r0DNCSfuFrRjTxKXEGCZV"
+      - "ZYpBt7qNHg8FIc3PwHeA+aN2KEGMb5rZ3HGAIlbSfLFEoKcgL3IYGpqIlgOtAtLcLl4G1UNVguwyBF1O4zwfDK0dKR7rz4G7j+g"
+      - "OoULjFdE64IsyDXGv82EtnJjYyQg6Nds06PDwhwPDSZ2otxaLHY9nPPvKvb9kfEmKykri6BG1ypxyDai39J8qyTaxTMg+lJJuLB"
+      - "ViTHqTsX89FEhRc3ZQIDAQAB"
+  - name: "0fk.net"
+    zonefile: mailcow
+    versionnumber: 2022031310
+    type: "master"
+    allow_transfer_from:
+      - hetzner
+    notify: "yes"
+    entries:
+      - "mail             3600 IN A 185.232.69.37"
+    dkimkey:
+      - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6pRW2oR6hpuxlCHzEs3tP/YlyAX"
+      - "Fhwac2IUGvI0sTlsYqnDZ2IRuXypQjM70SrSj7XRsl/gVDhED9BX4x//W7zj1y069OpgvslPOwkqTW8L6Ngie97Yi9ANZqBcUFU"
+      - "/b1de2hyHK0fRFhHQXr1drI3ystbZwuqdCznuM62VgfkNkt0luzVD6iDiqll3fFax9xwXU2nSU/sT40jNgSYyJpbAkexQI8OmvZ"
+      - "6BxcAvXS4zahIHTU3x2BzefbrNjnCmdTOq+ia9fhh3IjNvIoFy0GEWq3JHc3ipWWD1HHl6UPBWCyAaIgjitfOggBBhQqDy6h1GF"
+      - "Ai+HYwCcVhgEJ8Vw/wIDAQAB"
+  - name: "j1n.net"
+    zonefile: mailcow
+    versionnumber: 2022031310
+    type: "master"
+    allow_transfer_from:
+      - hetzner
+    notify: "yes"
+    entries:
+      - "mail             3600 IN A 185.232.69.37"
       - "chat IN A 185.233.106.80"
       - "chat IN AAAA 2a04:4000:24:7ab:482a:4bff:fe1d:3907"
+    dkimkey:
+      - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2jvJTdL+mXMCWE+wophDYtJBWnG"
+      - "Bj2M7xcHT5SzEydqEl3S9khlfVX1pQVHIV6FvSpXYsS5HmzXbnV9NGtOs4a5qkT9WLL5Kxnr8aONryf8rAOPgJcbJ6TunK1mjTh"
+      - "al6hZmBd8SIe2D2H6Piawnvio6PRRqcPu0NkO3fMeMdc1Ti/pq2P+LN03FDLVzFPO5o7qhvYyi3zDyOAK81LgG1/Rd/N5jfTPI+"
+      - "HP9bBfox65iH5Ru3H9OFByRxcJciL8Uz44P/FgbHwFXEs1A4W0Vf3hguR6eALGtnTO3tZs9xiezFj8aCpDqEWz4/fdqclv6pvrF"
+      - "7Y0pwt/Qwsfk7tqBOQIDAQAB"
   - name: "wxmn.net"
+    zonefile: mailcow
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes
+    notify: "yes"
+    entries:
+      - "mail             3600 IN A 185.232.69.37"
+    dkimkey:
+      - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1m+EI3N++TaQzFG8wl6rMLmTyrq"
+      - "izapAN+2s7JdShH8WWKLyrDE1fqwVdARCkqFZOmYcx4lQ3K+VaEYDyNiiqt2dKxG09/BXrt2V8m6WEpqWBWRLBhR6083koOF3qa"
+      - "NoaZ8WIPXOa0Bk9nI+Ms3bOQxXhKYxjyTAbVbeeDyqSaa+/Aog9Y42jU/LobIQ05q/V9hZ+IWcSA6x06F1ppKiEN281/IeS34GU"
+      - "O1fEK6OVYbkmgN/2Wd48Z6mkidRnAc0HIOXWyWuYFQc8t3gXBWh8rfEYTJ7gHY9McQd63B2E/sRWbgUY/XSBtlrzvr67O20k3o6"
+      - "TeY5P3rHS9fsQZHUwQIDAQAB"
   - name: "darc-e10.de"
+    zonefile: nomail
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes 
+    notify: "yes"
     entries:
+      - "mail             3600 IN A 185.232.69.37"
       - "@ IN A 136.243.155.190"
-      - "www IN A 136.243.155.190" 
+      - "www IN A 136.243.155.190"
   - name: "echo10.de"
+    zonefile: nomail
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes 
+    notify: "yes"
     entries:
       - "@ IN A 136.243.155.190"
-      - "www IN A 136.243.155.190" 
+      - "www IN A 136.243.155.190"
   - name: "fluffyunicorn.de"
+    zonefile: mailcow
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes 
+    notify: "yes"
+    entries:
+      - "mail             3600 IN A 185.232.69.37"
+    dkimkey:
+      - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2FOuIQsEEXzGrS4YF4ubn5uqj51"
+      - "g54takWnFMJbEpYg5+9spn4cSEhRf/RXY0Qj2p700Km/RYXZpKuNAGWDIcOnGbx0lG+JpyQp2HtcFPeC5nqVHlfQlbGySEmMfnz"
+      - "DOWBHY3quMnqSnRdZ8N06RJjbV2RaQhRN8koEOYbnMFPiJyb4NHdmbYwwGkbX5WykebM3Lbov9a17xALm/6x05xS/jKfpp3cBl/"
+      - "70C8Swy3mtxJTkOC0EPCAOeprSj2kU1udt7S1FXxlOnWKs+8EfZ/dxIzxCD6QG/0IZnbA/ZTMFRzdviBUaboZLJ4ho/aw0LE/Mu"
+      - "NnLLII9mcfc+ocexMwIDAQAB"
   - name: "digitalmonk.de"
+    zonefile: mailcow
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes 
+    notify: "yes"
+    entries:
+      - "mail             3600 IN A 185.232.69.37"
+    dkimkey:
+      - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxtbVBcHaPsCtomcus8yOVU8GePp"
+      - "8H0jycaOgddteLEAtdvRAJVR2CkCjqJN/hK75nEgimG0XbFKwtNqHMpuFBtCSBdaB+VpKEWRZ0HZUg5DSoTulKLO2+KmUuxrLlD"
+      - "aUYeEHU3kQRsX61vQHtNF1EJDj7jUrnaqSLymzc1fcYTtTU7isi/c/Ia5nJCNLxyEH8tbHN7t+OshvTiiiWYIJHYErQEYWkzcWa"
+      - "zVrgeaZaB0/EuX0nTrLDOyGoUwbE9MlLzmasfsd3dZgQywgLza2EHLbRl11Jgt2B+Tk8itjxs3Bk7BcMqh8NEpPuW1VxLdozCn8"
+      - "Prbpi5sa/Vod/+BwWQIDAQAB"
   - name: "xn--ns-wia.de"
+    zonefile: mailcow
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes 
+    notify: "yes"
+    entries:
+      - "mail             3600 IN A 185.232.69.37"
+    dkimkey:
+      - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwWGYwqiufpoqSWa0UNE4eSTPLa0"
+      - "W7opagmx98lgmOFXWyNxyUcO2GIwqXg0fNPsUrJpEqNXuDtwApBM5hzbeMm2E+X6WBU/IuL/gIoTdD0m8pJt8P5T2Ec3FnCCT3U"
+      - "J4muQhRXSY3HltVFgWgKGk6e3RwrMCKL1xNIirL/Mg6ejJZ0JKMyEi4NcyEuXjcGJN1dnLD9nI3lmCGidL2P5oTlQ/aCGJm9zH1"
+      - "dhMi5hmjtkncsbTAqkzyuKJc8mlqzp8scXS/RUTf7Bn8uURUqpvA/1xBNFMDdROR7h/LV2dcW6MrBNyByDcIszQTM0sLER0UTyw"
+      - "NOXkTtVPfI/2yY6MgQIDAQAB"
   - name: "xn--christophflgel-qsb.de"
+    zonefile: mailcow
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes 
+    notify: "yes"
+    dkimkey:
+      - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqOSDuXVogs5NfBveRAozbouEafk"
+      - "EMidN/OV78HDZgsxtiXkzu+626NKWywhzSsUE1jRdDZlkR0JGsQ6lde3e5BnPYWmnbC4Ff3XCEiwXj6jiiRt61Zeqw3KBdi5BUe"
+      - "Q0/IAIGeO+ajpny4NCyRdPWD2ThqwOdhpxNYzqUDhf8aZu6Oxn0xK+Q/Jh7QkPOKEPCdS5P1pCnEl4EslRIVcH0gZ+cgH6AtjjQ"
+      - "l7HFE4IuHyPpAZ99VjrhYRrlOUECyWf4QIlIQXQ0wwFMZWDbaru5GEI1o0DrQ+Qubw9sRUJTs0K2ESqk8UK7NaGcw87DSjmU0cL"
+      - "CUL3pq4mYgyWbMlXgwIDAQAB"
   - name: "xn--appel-in-neumnster-y6b.de"
+    zonefile: mailcow
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes 
+    notify: "yes"
+    entries:
+      - "mail             3600 IN A 185.232.69.37"
+    dkimkey:
+      - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxVUEIlnGASbMBEBzbYR4RxZwDQw"
+      - "AsA22ejfb5xymAB6mEsUlg0cc+Ym+xPdlL0tZpTyvmQSAYIcnIjCZnts1WsnaHZKBvs4edAOHjlDXmaNhBbqubF0GWa0n0akUhh"
+      - "P+iX8TCG5IwBY0zofls81dLAjp38C7cK7fj4ed5SPfKQTlRAnYIPKdbqwyOBS1JPaab7SU+ORauiCyuwDYSCERdFgDlCrRCefuA"
+      - "gSIKp5ptg3PQB5JfHy5lGE38/9QxY9cAljuDZcvgfX8p7F/lAU3wt0RmSg25QXW6qHUQcNPnW1/1RtGNBStgOIkIPoYWDCs7XqE"
+      - "YEhFlihrX28H7NgrxwIDAQAB"
   - name: "xn--appel-aus-neumnster-jbc.de"
+    zonefile: mailcow
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes 
+    notify: "yes"
+    entries:
+      - "mail             3600 IN A 185.232.69.37"
+    dkimkey:
+      - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwrt7dXpMNH84Z9zicTDL7iMfhJy"
+      - "Hsx1xgIO0AUYcyuMz9XmXY4QJQoIxu0DibfO8j/Uecv+I860EG5RkJgQ0RFymwH8RopVW3ktOe0BP4roSpOsQsPHrwX3cFh/L2Q"
+      - "UgGdtcOLBqMzf09Jnrif//5ogiue+JrfQujCOUr+O8y2TSrpECwEhnOGJ67NyeAB+rYcT4GXhg1FxH608B0JGXVTVMFcoU+LEbs"
+      - "4csAy8JX9zBp04r/vuLDRRlbsT0e2tI7T90RfRab822dej/vx4DA1wasXmQpZ5k4UNbKfiePK2EbPpAspS0MAxkF3bZh+7R3RFQ"
+      - "UiNf/9fHvTTzJfcIsQIDAQAB"
   - name: "uucptest.de"
+    zonefile: nomail
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes 
+    notify: "yes"
   - name: "uucpmail.de"
+    zonefile: nomail
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes 
+    notify: "yes"
   - name: "paarschiffen.de"
+    zonefile: nomail
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes 
+    notify: "yes"
   - name: "paar-schiffen.de"
+    zonefile: nomail
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes 
+    notify: "yes"
   - name: "dl2chf.de"
+    zonefile: mailcow
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes 
+    notify: "yes"
+    entries:
+      - "mail             3600 IN A 185.232.69.37"
+    dkimkey:
+     - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzNEu76s4HMEILZiRww8EuFh+6sZv"
+     - "NI8NDpWRryVbxNyhQF/brjjNW2fQF1FWjecdOLjns0zSVLMFsiEdSWwmpk3FAst1xj931W6+/+50GTkt5ZhtjHWfo0BuXI6j4VBf"
+     - "WKPdQTmR9BrNwuyaGcqwxuC1KVAa/9JBF54BN4CGjF/Xu77dYnQS+afiypMrUazXtIwuF2k3HNLgujW2/u6558hPjdDUJEYWsCeP"
+     - "IKjJM1UwOWojg6uIkn77kloeFPkHyPdWyDLcm8NP0SPwyNA/5TyQvgi6w82sKLr2EW2EsDumR6Z92g0tvcM59vo0O+Gf4H3JwOdY"
+     - "X7tdEaS8dkvBTwIDAQAB"
   - name: "christophfluegel.de"
+    zonefile: mailcow
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes 
+    notify: "yes"
+    entries:
+      - "mail             3600 IN A 185.232.69.37"
+    dkimkey:
+     - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvi0EZqpTnDbb1ll4FUITCiEDfFw4"
+     - "9OM8W62BlL6HRohguvmXocSYAZUwBXw0J1xlJkkDCCGs2zgwnDXn+zVGUvI1sGG63+gamqUOD6AT5tSAsrRwcqy41PL8EQgTIDl3"
+     - "tmCNYtvCb0G5jK/qjppB9mxt7KCMysY8CQre5yrwIpDefWX7owZD936g/rauZTygS3vQJHRGN1rcY+9ms9xZGG1wKKwujX4ggpJ0"
+     - "W3Ygtd/ZL1Haa6PbDOz4e2GaubQhtgsAg1/kwDLemu5eruwvMI+QA6/QQ6EzCDFKTzv0v1nWI4hY/fPnU8hCAi5alFck55gLFFkL"
+     - "0BLzYH0sYXTiQQIDAQAB"
   - name: "apple-family.de"
+    zonefile: nomail
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes 
+    notify: "yes"
   - name: "appel-in-nms.de"
+    zonefile: mailcow
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes 
+    notify: "yes"
+    entries:
+      - "mail             3600 IN A 185.232.69.37"
+    dkimkey:
+      - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnGEBJoxuA5mfLT06yAqYoAkQxzW"
+      - "Wzxq18nlKlYnHC/93OybrD47Edv9RIRjMY8/GliI/R+29oaBPxqqH1BShy2hOmSfgK7YJjlPzyUNCZElyZf931hhdKrttw/idRF"
+      - "6/hsZpvgZ+IAkbBuk9nhS/s0EtXx71h7Q/IMS+sqpkQzgU8wa0xppI/G/uYdP2mrPWZFzdDnOz3HsFR/j0W6mZX6k4DVaz8Mj1C"
+      - "FgSuyZr+JmQT+jIW3A9lA5g5OBNlDC8GiQXPmj+vyvWl/jWG3e2FzZIcM1Hl2DjNg4EJYkMgeuTCquSfGjDQ+bRyBHPP9claZN2"
+      - "lXmmQFHYP8itOg4cxQIDAQAB"
   - name: "appel-aus-nms.de"
+    zonefile: mailcow
+    versionnumber: 2022031310
     type: "master"
-    allow_transfer_from: 
+    allow_transfer_from:
       - hetzner
-    notify: yes 
-
+    notify: "yes"
+    entries:
+      - "mail             3600 IN A 185.232.69.37"
+    dkimkey:
+      - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAx9EZkllq1aCyFUQBmkG6XE6Ifaq"
+      - "XXXZ7CPGTlN/spB0KuYpOV20kNv4Jzj2azO3CJOC96SCNQDmaLh8J9eXZ10BOubEGEBd1dxxcA5yOaiIz0cxeWGLVA35n8Ibr/9"
+      - "8MmlYg6olDUFtysUde/2LsBV6v2FDxJWvaMXfcdZpOf5J0BtjOaTzPdhLEt5XsdmtHNFknPpP1gRJ/TQchdjSE5vAFdxPIx7XRI"
+      - "8XJKG+dg3b6VRkEd0fjr8OLxi9vesT7xEoIajNjDrO+cckRuC43ZIgrhvX/ATtrEXKM1kBTg8gJVxqWQWznjUJPUJtKbv2VHRva"
+      - "k1D/N6L6/oai5mPF5wIDAQAB"
+  - name: "familie-appel.net"
+    zonefile: mailcow
+    versionnumber: 2022031314
+    type: "master"
+    allow_transfer_from:
+      - hetzner
+    notify: "yes"
+    entries:
+      - "mail             3600 IN A 185.232.69.37"
+    dkimkey:
+      - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuf8LxBxY2MIkFm1WOJLOPUHISQFA"
+      - "cBh4NYG39g4geLAnXeCytVeVsxbgHgyp3UiqBDCy8urc/zmO/BXaBlQJD8vtFWdUd0j1DkSCn8jSnUyPz7AvS75S1lgZZvWiF4CU"
+      - "IsBuIAzWBudP60KxnEECuAtwm4PC10XdF3Ljz+vC/Jo6GkAGFSon7mQnkcAMS2TbuUt/Nr8g623oyEU/ViIesI+StoAyvnwH3H1j"
+      - "bMO3LG/OFom8ibOdNbQRDv5H+jXJ0q1jb5T8C97QqFt4GAyDuHDOVu57RNsWnOCO3aAcvIFgTY1MW8c/8nepirxO3vi71yX8jLON"
+      - "Rqhe2+56pg0E7QIDAQAB"
+    slave_servers:
+      - hydrogen.ns.hetzner.com
+      - oxygen.ns.hetzner.com
+      - helium.ns.hetzner.de

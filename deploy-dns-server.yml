@@ -1,80 +1,80 @@
 ---
-- hosts: dns 
-  remote_user: root 
+- hosts: dns
+  remote_user: root
 
-  tasks: 
-    - name: Update and upgrade system 
+  tasks:
+    - name: Update and upgrade system
       ansible.builtin.apt:
-        update_cache: yes 
+        update_cache: yes
         upgrade: safe
       tags:
         - installation
         - packages
-      
-    - name: Install of BIND packages 
-      ansible.builtin.apt: 
-        state: latest 
+
+    - name: Install of BIND packages
+      ansible.builtin.apt:
+        state: latest
         pkg:
           - bind9
           - bind9-host
           - bind9utils
           - dnsutils
-      tags: 
+      tags:
         - installation
         - packages
 
-    - name: Display the dns_zones 
+    - name: Display the dns_zones
       debug:
-        var: dns_zones 
+        var: dns_zones
       tags:
-        - debug 
-      when: 
+        - debug
+      when:
         - debug_vars
     - name: Debug default variables
       debug:
         var: dns_default_refresh
       tags:
-        - debug 
-      when: 
+        - debug
+      when:
         - debug_vars
     - name: Debug default variables
       debug:
         var: dns_default_retry
       tags:
-        - debug     
-      when: 
-        - debug_vars 
+        - debug
+      when:
+        - debug_vars
     - name: Debug default variables
       debug:
         var: dns_default_expire
       tags:
-        - debug 
-      when: 
+        - debug
+      when:
         - debug_vars
     - name: Debug default variables
       debug:
         var: dns_default_negativ_ttl
       tags:
-        - debug  
-      when: 
-        - debug_vars 
+        - debug
+      when:
+        - debug_vars
 
-    - name: Create directory for log fies 
+    - name: Create directory for log fies
       ansible.builtin.file:
-        state: directory 
+        state: directory
         path: /var/log/named
-        mode: '0774' 
+        mode: '0774'
         owner: bind
-        group: bind 
+        group: bind
       tags:
         - installation
         - configuration
 
-    - name: Create Log files 
+    - name: Create Log files
       ansible.builtin.file:
-        group: bind 
-        owner: bind 
-        state: touch 
+        group: bind
+        owner: bind
+        state: touch
         mode: '0660'
         path: "{{ item }}"
       with_items:
@@ -99,48 +99,50 @@
         - installation
         - configurationa
 
-    - name: Deploy named.conf.options 
-      ansible.builtin.template: 
+    - name: Deploy named.conf.options
+      ansible.builtin.template:
         src: dns/named.conf.options.j2
         dest: /etc/bind/named.conf.options
-        owner: root 
-        group: bind  
+        owner: root
+        group: bind
         mode: '0644'
-      notify: 
-        - Restart bind 
+      notify:
+        - Restart bind
       tags:
         - configuration
 
 
-    - name: Deploy named.conf.local 
+    - name: Deploy named.conf.local
       ansible.builtin.template:
-        src: dns/named.conf.local.j2 
+        src: dns/named.conf.local.j2
         dest: /etc/bind/named.conf.local
-        owner: root 
-        group: bind 
+        owner: root
+        group: bind
         mode: '0644'
-      notify: 
-        - Restart bind 
+      notify:
+        - Restart bind
       tags:
         - configuration
 
 
     - name: Deploy individual zone files
       ansible.builtin.template:
-        src: dns/zonefile-master.j2 
+        src: dns/zonefile-master-{{ item.zonefile }}.j2
         dest: "/var/cache/bind/db.{{ item.name }}"
-        owner: root 
-        group: bind 
+        owner: root
+        group: bind
         mode: '0644'
       with_items: "{{ dns_zones }}"
-      notify: 
-        - Restart bind 
+      when:
+        - item.type == "master"
+      notify:
+        - Restart bind
       tags:
         - configuration
         - zonefiles
 
   handlers:
-    - name: Restart bind 
+    - name: Restart bind
       ansible.builtin.service:
         name: bind9
-        state: restarted 
+        state: restarted
