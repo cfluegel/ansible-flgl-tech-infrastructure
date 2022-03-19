@@ -11,7 +11,7 @@ My old infrastructure uses a Hetzner server. There I use Proxmox to separate my 
 - [ ] Mailserver - required
 - [ ] Wireguard Overlay Mesh Network - required
 - [ ] Jitsi - optional
-- [ ] Matrix - optional
+- [x] Matrix - optional
 
 ## Secrets
 
