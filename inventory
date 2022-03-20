@@ -12,6 +12,6 @@ all:
     nextcloud:
       hosts:
         www.fluegel.cloud
-    www-multi-tannant:
+    www-multi-tenant:
       hosts:
         www1.flgl.tech
