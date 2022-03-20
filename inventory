@@ -3,7 +3,7 @@ all:
     dns:
       hosts:
         dns1.flgl.tech
-    mailserver:
+    mailcow:
       hosts:
         mail.flgl.tech
     matrix:
@@ -14,4 +14,4 @@ all:
         www.fluegel.cloud
     www-multi-tannant:
       hosts:
-        web1.flgl.tech
+        www1.flgl.tech
