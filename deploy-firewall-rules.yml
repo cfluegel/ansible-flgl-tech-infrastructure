@@ -1,5 +1,5 @@
 ---
-- hosts: dns:www-multi-tannant
+- hosts: dns:www-multi-tannant:nextcloud
   remote_user: root
 
   tasks:
@@ -81,7 +81,7 @@
         - configuration
         - firewall
 
-- hosts: www-multi-tannant
+- hosts: www-multi-tannant:nextcloud
   remote_user: root
 
   tasks:
