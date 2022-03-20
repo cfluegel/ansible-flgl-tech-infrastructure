@@ -28,14 +28,17 @@ dns_zones:
       - "Ai+HYwCcVhgEJ8Vw/wIDAQAB"
   - name: "j1n.net"
     zonefile: mailcow
-    versionnumber: 2022031341
+    versionnumber: 2022032002
     type: "master"
     allow_transfer_from:
       - hetzner
     notify: "yes"
     entries:
-      - "chat IN A 185.233.106.80"
-      - "chat IN AAAA 2a04:4000:24:7ab:482a:4bff:fe1d:3907"
+      - "chat IN A          185.233.106.80"
+      - "chat IN AAAA       2a04:4000:24:7ab:482a:4bff:fe1d:3907"
+      - "@    IN A          185.183.156.98"
+      - "www  IN AAAA       2a03:4000:1d:afc::80"
+      - "www  IN A          185.183.156.98"
     dkimkey:
       - "v=DKIM1;k=rsa;t=s;s=email;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2jvJTdL+mXMCWE+wophDYtJBWnG"
       - "Bj2M7xcHT5SzEydqEl3S9khlfVX1pQVHIV6FvSpXYsS5HmzXbnV9NGtOs4a5qkT9WLL5Kxnr8aONryf8rAOPgJcbJ6TunK1mjTh"
