@@ -1,5 +1,4 @@
 ---
-certbot_certs: 
-  - domains: 
-      - www.fluegel.cloud 
-
+certbot_certs:
+  - domains:
+     - www.fluegel.cloud

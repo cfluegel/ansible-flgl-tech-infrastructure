@@ -1,30 +1,33 @@
 ---
 - hosts: nextcloud
-  remote_user: root 
+  remote_user: root
 
-  roles: 
+  vars_files:
+    - "secrets/{{ inventory_hostname }}.yml"
+
+  roles:
     - geerlingguy.certbot
 
-- hosts: nextcloud 
-  remote_user: root 
-  
-  vars_files:
-    - secrets/nextcloud.yml
+- hosts: nextcloud
+  remote_user: root
 
-  tasks: 
-    - name: Update and upgrade system 
+  vars_files:
+    - "secrets/{{ inventory_hostname }}.yml"
+
+  tasks:
+    - name: Update and upgrade system
       ansible.builtin.apt:
-        update_cache: yes 
+        update_cache: yes
         upgrade: safe
       tags:
         - installation
         - packages
-      
-    - name: Install of packages 
-      ansible.builtin.apt: 
-        state: latest 
+
+    - name: Install of packages
+      ansible.builtin.apt:
+        state: latest
         pkg:
-          - sudo 
+          - sudo
           - apache2
           - libapache2-mod-php
           - php
@@ -33,7 +36,7 @@
           - php-bz2
           - php-zip
           - php-gd
-          - php-xml 
+          - php-xml
           - php-json
           - php-mysql
           - php-sqlite3
@@ -46,322 +49,322 @@
           - ffmpeg
           - mariadb-common
           - mariadb-client
-          - mariadb-server 
+          - mariadb-server
           - unzip
           - python3-pymysql
           - python3-mysqldb
-      tags: 
+      tags:
         - installation
         - packages
 
-    - ansible.builtin.stat: 
+    - ansible.builtin.stat:
         path: "/root/nextcloud-install.zip"
-      register: nc_reg_downloaded 
+      register: nc_reg_downloaded
 
-    - ansible.builtin.stat: 
+    - ansible.builtin.stat:
         path: "/var/www/nextcloud"
-      register: nc_reg_wwwdir 
-    
-#    - debug: 
+      register: nc_reg_wwwdir
+
+#    - debug:
 #        msg: "Nextcloud seems to be already installed"
 #      when:  nc_reg_wwwdir.stat.exists
 
     # TODO:
-    # rethink this, as I may want to use this to change configuration in php.ini files... 
-    # just dont do anything that might destroy the installation... 
+    # rethink this, as I may want to use this to change configuration in php.ini files...
+    # just dont do anything that might destroy the installation...
 #   - name: Nextcloud seems to be already installed -> quit
-#      meta: end_host 
-#      when: nc_reg_wwwdir.stat.exists 
+#      meta: end_host
+#      when: nc_reg_wwwdir.stat.exists
 
     - name: Download the Nextcloud Version 23.0.0
       ansible.builtin.get_url:
         checksum: "sha256:https://download.nextcloud.com/server/releases/nextcloud-23.0.0.zip.sha256"
         url: "https://download.nextcloud.com/server/releases/nextcloud-23.0.0.zip"
         dest: "/root/nextcloud-install.zip"
-      when: 
+      when:
         - nc_reg_downloaded.stat.exists != True
-      tags: 
-        - installation 
+      tags:
+        - installation
         - download
-    
-    - name: Extracted installer to /var/www/nextcloud 
-      ansible.builtin.unarchive: 
+
+    - name: Extracted installer to /var/www/nextcloud
+      ansible.builtin.unarchive:
         src: "/root/nextcloud-install.zip"
         remote_src: yes
         dest: "/var/www/"
-      when: 
-        - nc_reg_wwwdir.stat.exists != True 
+      when:
+        - nc_reg_wwwdir.stat.exists != True
       tags:
         - installation
-        - source 
+        - source
 
-    - name: Set permissions on /var/www/nextcloud 
-      ansible.builtin.file: 
+    - name: Set permissions on /var/www/nextcloud
+      ansible.builtin.file:
         path: "/var/www/nextcloud"
-        state: directory 
-        owner: www-data 
-        group: www-data 
+        state: directory
+        owner: www-data
+        group: www-data
         mode: '0755'
-        recurse: yes 
-      tags: 
-        - installation 
-        - source 
+        recurse: yes
+      tags:
+        - installation
+        - source
 
-    - name: Create nextcloud apache virtual host site 
+    - name: Create nextcloud apache virtual host site
       ansible.builtin.template:
         src: nextcloud/apache2-nextcloud.j2
-        dest: /etc/apache2/sites-available/nextcloud.conf 
-        owner: root 
-        group: root 
-        mode: '0644'
-      tags:
-        - configuration 
-        - apache
-
-    - name: PHP Apache php.ini
-      ansible.builtin.template: 
-        src: nextcloud/php/php-apache.j2
-        dest: /etc/php/7.4/apache2/php.ini
+        dest: /etc/apache2/sites-available/nextcloud.conf
         owner: root
-        group: root 
+        group: root
         mode: '0644'
       tags:
         - configuration
-        - php 
-    
+        - apache
+
+    - name: PHP Apache php.ini
+      ansible.builtin.template:
+        src: nextcloud/php/php-apache.j2
+        dest: /etc/php/7.4/apache2/php.ini
+        owner: root
+        group: root
+        mode: '0644'
+      tags:
+        - configuration
+        - php
+
     - name: PHP Cli php.ini
       ansible.builtin.template:
         src: nextcloud/php/php-cli.j2
         dest: /etc/php/7.4/cli/php.ini
         owner: root
-        group: root 
-        mode: '0644'   
+        group: root
+        mode: '0644'
       tags:
         - configuration
-        - php 
+        - php
 
-    # Apache commands 
-    - name: Activate new virtual host 
-      ansible.builtin.shell: a2ensite nextcloud.conf 
-      tags: 
-        - configuration 
-        - apache 
-    - name: Enable Apache mod - mod_rewrite 
-      ansible.builtin.shell: a2enmod rewrite 
-      tags: 
-        - configuration 
-        - apache 
+    # Apache commands
+    - name: Activate new virtual host
+      ansible.builtin.shell: a2ensite nextcloud.conf
+      tags:
+        - configuration
+        - apache
+    - name: Enable Apache mod - mod_rewrite
+      ansible.builtin.shell: a2enmod rewrite
+      tags:
+        - configuration
+        - apache
     - name: Enable Apache mod - mod_headers
-      ansible.builtin.shell: a2enmod headers 
-      tags: 
-        - configuration 
-        - apache 
-    - name: Enable Apache mod - mod_env 
-      ansible.builtin.shell: a2enmod env 
-      tags: 
-        - configuration 
-        - apache 
-    - name: Enable Apache mod - mod_dir 
-      ansible.builtin.shell: a2enmod dir  
-      tags: 
-        - configuration 
-        - apache 
-    - name: Enable Apache mod - mod_mime 
+      ansible.builtin.shell: a2enmod headers
+      tags:
+        - configuration
+        - apache
+    - name: Enable Apache mod - mod_env
+      ansible.builtin.shell: a2enmod env
+      tags:
+        - configuration
+        - apache
+    - name: Enable Apache mod - mod_dir
+      ansible.builtin.shell: a2enmod dir
+      tags:
+        - configuration
+        - apache
+    - name: Enable Apache mod - mod_mime
       ansible.builtin.shell: a2enmod mime
-      tags: 
-        - configuration 
-        - apache 
-    - name: Disable Apache mod - mod_dav 
-      ansible.builtin.shell: a2dismod dav 
-      tags: 
-        - configuration 
-        - apache 
-    - name: Enable Apache mod - mod_ssl 
-      ansible.builtin.shell: a2enmod ssl 
-      tags: 
-        - configuration 
-        - apache 
-    # - name: Enable Apache site - default-ssl.conf 
+      tags:
+        - configuration
+        - apache
+    - name: Disable Apache mod - mod_dav
+      ansible.builtin.shell: a2dismod dav
+      tags:
+        - configuration
+        - apache
+    - name: Enable Apache mod - mod_ssl
+      ansible.builtin.shell: a2enmod ssl
+      tags:
+        - configuration
+        - apache
+    # - name: Enable Apache site - default-ssl.conf
     #   ansible.builtin.shell: a2ensite default-ssl.conf
-    #   tags: 
-    #     - configuration 
-    #     - apache 
+    #   tags:
+    #     - configuration
+    #     - apache
 
-    - name: Restart Apache 
+    - name: Restart Apache
       ansible.builtin.service:
         name: apache2
         state: stopped
       tags:
-        - configuration 
-        - apache 
-    - name: Restart Apache 
+        - configuration
+        - apache
+    - name: Restart Apache
       ansible.builtin.service:
         name: apache2
-        state: started 
+        state: started
       tags:
-        - configuration 
-        - apache 
+        - configuration
+        - apache
 
     - community.mysql.mysql_query:
         login_unix_socket: /var/run/mysqld/mysqld.sock
-        query: 
-          - show databases like 'nextcloud' 
+        query:
+          - show databases like 'nextcloud'
           - select User from mysql.user where User = 'nextcloud'
       register: nc_reg_db_query
-      tags: 
+      tags:
         - database
 
     - debug:
-        var: nc_reg_db_query.rowcount 
+        var: nc_reg_db_query.rowcount
       tags:
-        - debug 
-        - database 
+        - debug
+        - database
     - debug:
         var: nc_reg_db_query.rowcount.0
       tags:
-        - debug 
-        - database 
+        - debug
+        - database
     - debug:
         var: nc_reg_db_query.rowcount.1
       tags:
-        - debug 
-        - database 
+        - debug
+        - database
 
     - name: Create Nextcloud database user
       community.mysql.mysql_user:
         name: nextcloud
         password: '{{ nextcloud_mysql_password }}'
-        encrypted: '{{ nextcloud_mysql_password_encrypted }}' 
+        encrypted: '{{ nextcloud_mysql_password_encrypted }}'
         priv: 'nextcloud.*:ALL'
-        state: present 
+        state: present
         login_unix_socket: /var/run/mysqld/mysqld.sock
-      when: 
+      when:
         - nc_reg_db_query.rowcount.0 < 1
-        - nc_reg_db_query.rowcount.1 < 1   
+        - nc_reg_db_query.rowcount.1 < 1
       tags:
         - configuration
-        - mysql 
+        - mysql
 
-    - name: Install Nextcloud from Commandline 
-      ansible.builtin.shell: 
+    - name: Install Nextcloud from Commandline
+      ansible.builtin.shell:
         chdir: /var/www/nextcloud
         cmd: 'php /var/www/nextcloud/occ maintenance:install --database "mysql" --database-name "nextcloud" --database-user "nextcloud" --database-pass "{{ nextcloud_mysql_password }}" --admin-user "admin" --admin-pass "{{ nextcloud_admin_password }}"'
       become: true
-      become_user: www-data 
-      when: 
-        - nc_reg_db_query.rowcount.0 < 1 
-        - nc_reg_db_query.rowcount.1 < 1  
+      become_user: www-data
+      when:
+        - nc_reg_db_query.rowcount.0 < 1
+        - nc_reg_db_query.rowcount.1 < 1
       tags:
         - installation
         - nextcloud
 
-    - name: Add the domain name to the trusted domains 
-      ansible.builtin.shell: 
+    - name: Add the domain name to the trusted domains
+      ansible.builtin.shell:
         chdir: /var/www/nextcloud
         cmd: 'php /var/www/nextcloud/occ config:system:set trusted_domains 1 --value="{{ inventory_hostname }}"'
       become: true
-      become_user: www-data 
-      when: 
-        - nc_reg_db_query.rowcount.0 < 1 
-        - nc_reg_db_query.rowcount.1 < 1  
+      become_user: www-data
+      when:
+        - nc_reg_db_query.rowcount.0 < 1
+        - nc_reg_db_query.rowcount.1 < 1
       tags:
         - configuration
         - nextcloud
 
-    - name: Change overwrite.cli.url to inventory_hostname 
-      ansible.builtin.shell: 
+    - name: Change overwrite.cli.url to inventory_hostname
+      ansible.builtin.shell:
         chdir: /var/www/nextcloud
         cmd: 'php /var/www/nextcloud/occ config:system:set overwrite.cli.url --value="https://{{ inventory_hostname }}"'
       become: true
-      become_user: www-data 
-      when: 
-        - nc_reg_db_query.rowcount.0 < 1 
-        - nc_reg_db_query.rowcount.1 < 1  
+      become_user: www-data
+      when:
+        - nc_reg_db_query.rowcount.0 < 1
+        - nc_reg_db_query.rowcount.1 < 1
       tags:
         - configuration
         - nextcloud
 
-    - name: Configure logfile rotation after 20mb 
-      ansible.builtin.shell: 
+    - name: Configure logfile rotation after 20mb
+      ansible.builtin.shell:
         chdir: /var/www/nextcloud
         cmd: 'php /var/www/nextcloud/occ config:system:set log_rotate_size --value="21082620" --type=string'
       become: true
-      become_user: www-data 
+      become_user: www-data
       tags:
         - configuration
         - nextcloud
 
 
-    - name: Set mail_from email 
-      ansible.builtin.shell: 
+    - name: Set mail_from email
+      ansible.builtin.shell:
         chdir: /var/www/nextcloud
         cmd: 'php /var/www/nextcloud/occ config:system:set mail_from_address --value="nextcloud" --type=string'
       become: true
-      become_user: www-data 
+      become_user: www-data
       tags:
         - configuration
         - nextcloud
 
-    - name: Set mail_domain to {{ inventory_hostname }} 
-      ansible.builtin.shell: 
+    - name: Set mail_domain to {{ inventory_hostname }}
+      ansible.builtin.shell:
         chdir: /var/www/nextcloud
         cmd: 'php /var/www/nextcloud/occ config:system:set mail_domain --value="{{ inventory_hostname }}" --type=string'
       become: true
-      become_user: www-data 
+      become_user: www-data
       tags:
         - configuration
         - nextcloud
 
-    - name: Set outgoing mail to only plaintext 
-      ansible.builtin.shell: 
+    - name: Set outgoing mail to only plaintext
+      ansible.builtin.shell:
         chdir: /var/www/nextcloud
         cmd: 'php /var/www/nextcloud/occ config:system:set mail_send_plaintext_only --value="true" --type=boolean'
       become: true
-      become_user: www-data 
+      become_user: www-data
       tags:
         - configuration
         - nextcloud
 
-    - name: Set default phone region to DE 
-      ansible.builtin.shell: 
+    - name: Set default phone region to DE
+      ansible.builtin.shell:
         chdir: /var/www/nextcloud
         cmd: 'php /var/www/nextcloud/occ config:system:set default_phone_region --value="DE" --type=string'
       become: true
-      become_user: www-data 
+      become_user: www-data
       tags:
         - configuration
         - nextcloud
 
-    - name: Set the cron type to system cron  
-      ansible.builtin.shell: 
+    - name: Set the cron type to system cron
+      ansible.builtin.shell:
         chdir: /var/www/nextcloud
         cmd: 'php /var/www/nextcloud/occ config:app:set core backgroundjobs_mode --value="cron"'
       become: true
-      become_user: www-data 
+      become_user: www-data
       tags:
         - configuration
         - nextcloud
 
-    - name: Put Cron into place 
+    - name: Put Cron into place
       ansible.builtin.cron:
-        name: Nextcloud Cron 
-        user: www-data 
+        name: Nextcloud Cron
+        user: www-data
         minute: "*/5"
         job: "php --define apc.enable_cli=1 -f /var/www/nextcloud/cron.php"
       tags:
         - configuration
-        - nextcloud 
+        - nextcloud
         - cron
-        
-    - name: Configure memcache to APCu 
-      ansible.builtin.shell: 
+
+    - name: Configure memcache to APCu
+      ansible.builtin.shell:
         chdir: /var/www/nextcloud
         cmd: 'php --define apc.enable_cli=1 /var/www/nextcloud/occ config:system:set memcache.local --value="\OC\Memcache\APCu" --type=string'
       become: true
-      become_user: www-data 
-      when: 
-        - nc_reg_db_query.rowcount.0 < 1 
-        - nc_reg_db_query.rowcount.1 < 1  
+      become_user: www-data
+      when:
+        - nc_reg_db_query.rowcount.0 < 1
+        - nc_reg_db_query.rowcount.1 < 1
       tags:
         - configuration
         - nextcloud
