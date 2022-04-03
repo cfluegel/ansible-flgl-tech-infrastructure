@@ -3,6 +3,10 @@ all:
     dns:
       hosts:
         dns1.flgl.tech
+    webserver:
+      hosts:
+        www.fluegel.cloud
+        www1.flgl.tech
     mailcow:
       hosts:
         mail.flgl.tech
