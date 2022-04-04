@@ -30,3 +30,9 @@ My current idea is to use the Wireguard VPN to store the data on a NAS in my loc
 ### Matrix
 
 For Matrix I will use the ansible playbook from this Github repo https://github.com/spantaleev/matrix-docker-ansible-deploy. I will not build my own playbook.
+
+
+## TODO
+
+- Configure the resolved ipv6 address to the main network interface (provider specific setup)
+- Perform a namend-checkzone after the template process to make sure that the zonefile can be loaded
