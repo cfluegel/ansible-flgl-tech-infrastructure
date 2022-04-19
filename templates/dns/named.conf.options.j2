@@ -1,3 +1,6 @@
+// {{ ansible_managed }}
+
+
 options {
 	directory "/var/cache/bind";
 
@@ -8,12 +11,12 @@ options {
    	dnssec-enable yes;
 	dnssec-validation auto;
 
-    	recursion no; 
+    	recursion no;
 
 	auth-nxdomain no;    # conform to RFC1035
 	listen-on-v6 { any; };
 
-    	allow-transfer { "none"; }; 
+    	allow-transfer { "none"; };
 };
 
 
@@ -123,9 +126,9 @@ logging {
 	category lame-servers { lame-servers_file; };
 };
 
-{% for acl in dns_acls %} 
+{% for acl in dns_acls %}
 
-acl "{{ acl.name }}" { 
+acl "{{ acl.name }}" {
 {% for host in acl.hosts %}
 	{{ host }};
 {% endfor %}

@@ -36,6 +36,8 @@ $TTL 3600
           {{ expire }}
           {{ negativ_ttl }} )
 
+; {{ ansible_managed }}
+
 ; Server Adresse von diesem Server
 @                 IN NS       {{ ansible_fqdn }}.
 

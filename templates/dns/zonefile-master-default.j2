@@ -24,24 +24,26 @@
 {% set negativ_ttl =  dns_default_negativ_ttl %}
 {% endif %}
 {% if item.slave_servers is defined %}
-{% set slaveservers = item.slave_servers %} 
-{% else %} 
+{% set slaveservers = item.slave_servers %}
+{% else %}
 {% set slaveservers = slave_servers %}
 {% endif %}
 $TTL 3600
 @   IN  SOA   {{ ansible_fqdn }}. {{ dns_mailadmin | replace('@','.') }}. (
-          {{ versionnumber }}  
-          {{ refresh }}  
-          {{ retry }}  
-          {{ expire }} 
-          {{ negativ_ttl }} )   
+          {{ versionnumber }}
+          {{ refresh }}
+          {{ retry }}
+          {{ expire }}
+          {{ negativ_ttl }} )
 
-; Server Adresse von diesem Server 
+; {{ ansible_managed }}
+
+; Server Adresse von diesem Server
 @                 IN NS       {{ ansible_fqdn }}.
 
 ; Hetzner Hostname nach Kauf zusaetzlicher Domain Option
 {% for server in slaveservers %}
-@                 IN NS       {{ server }}. 
+@                 IN NS       {{ server }}.
 {% endfor %}
 
 ; Mail Einstellungen fuer die Domain (Stand: March 2019)
@@ -59,6 +61,6 @@ _dmarc            IN TXT      "v=DMARC1; p=reject"
 
 {% if item.entries is defined %}
 {% for entry in item.entries %}
-{{ entry }} 
+{{ entry }}
 {% endfor %}
 {% endif %}
