@@ -2,6 +2,9 @@
 - hosts: dns
   remote_user: root
 
+  vars_files:
+    - "secrets/{{ inventory_hostname }}.yml"
+
   tasks:
     - name: Update and upgrade system
       ansible.builtin.apt:
