@@ -1,0 +1,104 @@
+# {{ ansible_managed }}
+#
+
+{% if item.Type == 'Redirect' -%}
+#
+<VirtualHost *:80>
+    ServerName {{ item.ServerName }}
+    ServerAlias {{ item.ServerAlias }}
+    Redirect permanent / {{ item.Redirect_Target }}
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName {{ item.ServerName }}
+    ServerAlias {{ item.ServerAlias }}
+    Redirect permanent / {{ item.Redirect_Target }}
+</VirtualHost>
+
+
+{% elif item.Type == 'Local' -%}
+#
+## HTTP Configuration
+# Redirect HTTP to HTTPs
+# Use the ServerName as target for this Redirect
+<VirtualHost *:80>
+    ServerName {{ item.ServerName }}
+    ServerAlias {{ item.ServerAlias }}
+    Redirect / https://{{ item.ServerName }}/
+</VirtualHost>
+
+## HTTPS Configuration
+<VirtualHost *:443>
+    ServerName {{ item.ServerName }}
+    {% if item.ServerAlias != '' -%}
+    ServerAlias {{ item.ServerAlias }}
+    {% endif -%}
+
+    DocumentRoot              /srv/www/{{ item.ServerName }}/docs
+
+    {% set letsencrypt_base_name = item.LetsEncrypt_Domain if (item.LetsEncrypt_Domain is defined) else item.ServerName %}
+    # SSL Configuration
+    SSLEngine on
+    SSLCertificateFile        /etc/letsencrypt/live/{{ letsencrypt_base_name }}/cert.pem
+    SSLCertificateKeyFile     /etc/letsencrypt/live/{{ letsencrypt_base_name }}/privkey.pem
+    SSLCertificateChainFile   /etc/letsencrypt/live/{{ letsencrypt_base_name }}/fullchain.pem
+
+    # SSL Hardening
+    # https://raymii.org/s/tutorials/Strong_SSL_Security_On_Apache2.html
+    SSLProtocol               -all +TLSv1.3 +TLSv1.2
+    SSLOpenSSLConfCmd         Curves X25519:secp521r1:secp384r1:prime256v1
+    SSLCipherSuite            EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+    SSLHonorCipherOrder       on
+    SSLCompression            off
+
+    # SSL Workarounds  (may not be necessary anymore)
+    BrowserMatch "MSIE [2-6]" nokeepalive ssl-unclean-shutdown \
+                              downgrade-1.0 force-response-1.0
+    # MSIE 7 and newer should be able to use keepalive
+    BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+
+
+    {% if item.MatrixWellKnownRedirect is true -%}
+    # Matrix Redirection (if enabled)
+
+    {% if 'https' in item.MatrixWellKnownRedirect_Target -%}
+    # Target URL contains https and thus needs to have this enabled
+    SSLProxyEngine on
+    {% endif -%}
+
+    <Location /.well-known/matrix>
+        ProxyPass "{{ item.MatrixWellKnownRedirect_Target }}"
+    </Location>
+    {% endif -%}
+
+    # "Basic Security"
+    <Directory />
+        Options -FollowSymLinks
+        AllowOverride None
+    </Directory>
+
+    {% if item.PHPFastCGI is true -%}
+    # PHP FastCGI activated for this vHost
+    SuexecUserGroup
+    AddHandler fcgid-script .php
+    # FCGIDConnectTimeout 20
+    # MaxRequestLen
+    <Directory /srv/www/{{ item.ServerName }}/docs>
+        Options -Indexes -MultiViews -FollowSymLinks +ExecCGI +SymlinksIfOwnerMatch
+        FCGIWrapper /srv/www/{{ item.ServerName }}/php-fcgi/php-fcgi-starter .php
+        Require all granted
+        AllowOverride FileInfo
+    </Directory>
+    {% else -%}
+    <Directory /srv/www/{{ item.ServerName }}/docs>
+        Options -Indexes -MultiViews -FollowSymLinks +ExecCGI +SymlinksIfOwnerMatch
+        Require all granted
+        AllowOverride FileInfo
+    </Directory>
+    {% endif -%}
+
+    # Logging
+    ErrorLog ${APACHE_LOG_DIR}/{{ item.ServerName }}-error.log
+    CustomLog ${APACHE_LOG_DIR}/{{ item.ServerName }}-access.log combined
+</VirtualHost>
+{% endif -%}

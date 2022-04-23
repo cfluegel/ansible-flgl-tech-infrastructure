@@ -1,0 +1,243 @@
+---
+# First deploy certbot and request a SSL certificate for all hosts
+- name: Certbot SSL certificates
+  hosts: www-multi-tenant
+  remote_user: root
+
+  vars_files:
+    - "secrets/{{ inventory_hostname }}.yml"
+
+  roles:
+    - geerlingguy.certbot
+  tags:
+    - ssl
+    - roles
+
+- name: Main play
+  hosts: www-multi-tenant
+  remote_user: root
+
+  vars_files:
+    - "secrets/{{ inventory_hostname }}.yml"
+
+  tasks:
+    - name: Update and upgrade system
+      ansible.builtin.apt:
+        update_cache: yes
+        upgrade: safe
+      tags:
+        - installation
+        - packages
+
+    - name: Install of packages
+      ansible.builtin.apt:
+        state: latest
+        pkg:
+          - sudo
+          - unzip
+          - python3-pymysql
+          - python3-mysqldb
+          - mariadb-common
+          - mariadb-client
+          - mariadb-server
+          - apache2
+          - apache2-suexec-custom
+          - apache2-bin
+          - apache2-data
+          - apache2-utils
+          - libapache2-mod-php
+          - php
+          - php-cli
+          - php-cgi
+          - php-common
+          - php-curl
+          - php-bz2
+          - php-zip
+          - php-gd
+          - php-xml
+          - php-json
+          - php-mysql
+          - php-sqlite3
+          - php-imagick
+          - php-mbstring
+          - php-intl
+          - php-bcmath
+          - php-gmp
+          - php-apcu
+      tags:
+        - installation
+        - packages
+
+    - name: Enable Apache mod - mod_ssl
+      ansible.builtin.shell: a2enmod ssl
+      tags:
+        - configuration
+        - apache
+    - name: Enable Apache mod - mod_proxy
+      ansible.builtin.shell: a2enmod proxy
+      tags:
+        - configuration
+        - apache
+    - name: Enable Apache mod - mod_proxy_http
+      ansible.builtin.shell: a2enmod proxy_http
+      tags:
+        - configuration
+        - apache
+
+    - name: Check the web directory /srv/www
+      ansible.builtin.stat:
+        path: "/srv/www/"
+      register: mtwww_reg_wwwdir
+
+    - name: Create webserver directory /srv/www if it does not exist
+      ansible.builtin.file:
+        path: "/srv/www"
+        state: directory
+        mode: '0777'
+        owner: www-data
+        group: www-data
+      when:
+        - mtwww_reg_wwwdir.stat.exists != True
+
+    - name: Configure suexec to the web directory
+      ansible.builtin.template:
+        src: "multi-tenant-webserver/suexec-configuration.j2"
+        dest: "/etc/apache2/suexec/www-data"
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Debug the mtws_domains
+      debug:
+        var: mtws_domains
+      tags:
+        - debug
+      when:
+        - debug_vars
+
+    - name: Create user accounts
+      ansible.builtin.user:
+        name: '{{ item.User }}'
+        shell: /bin/bash
+        state: present
+      loop: "{{ mtws_domains }}"
+      when:
+        - item.Type == 'Local'
+
+    - name: Deploy default vhost index.html
+      ansible.builtin.copy:
+        src: multi-tenant-webserver/default-index.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Deploy default vhost Server configuration
+      ansible.builtin.template:
+        src: "multi-tenant-webserver/000-default.conf.j2"
+        dest: "/etc/apache2/sites-available/000-default.conf"
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Create webspace base directory
+      ansible.builtin.file:
+        state: directory
+        path: '/srv/www/{{ item.ServerName }}'
+        owner: '{{ item.User }}'
+        group: '{{ item.User }}'
+      loop: "{{ mtws_domains }}"
+      when:
+        - item.Type == 'Local'
+
+    - name: Create /srv/www/<BaseDir>/conf
+      ansible.builtin.file:
+        state: directory
+        path: '/srv/www/{{ item.ServerName }}/conf'
+        owner: '{{ item.User }}'
+        group: '{{ item.User }}'
+      loop: "{{ mtws_domains }}"
+      when:
+        - item.Type == 'Local'
+
+    - name: Create /srv/www/<BaseDir>/docs
+      ansible.builtin.file:
+        state: directory
+        path: '/srv/www/{{ item.ServerName }}/docs'
+        owner: '{{ item.User }}'
+        group: '{{ item.User }}'
+      loop: "{{ mtws_domains }}"
+      when:
+        - item.Type == 'Local'
+
+    - name: Create /srv/www/<BaseDir>/logs
+      ansible.builtin.file:
+        state: directory
+        path: '/srv/www/{{ item.ServerName }}/logs'
+        owner: '{{ item.User }}'
+        group: '{{ item.User }}'
+      loop: "{{ mtws_domains }}"
+      when:
+        - item.Type == 'Local'
+
+    - name: Create /srv/www/<BaseDir>/tmp
+      ansible.builtin.file:
+        state: directory
+        path: '/srv/www/{{ item.ServerName }}/tmp'
+        owner: '{{ item.User }}'
+        group: '{{ item.User }}'
+      loop: "{{ mtws_domains }}"
+      when:
+        - item.Type == 'Local'
+
+    - name: Create /srv/www/<BaseDir>/php-fcgi
+      ansible.builtin.file:
+        state: directory
+        path: '/srv/www/{{ item.ServerName }}/php-fcgi'
+        owner: '{{ item.User }}'
+        group: '{{ item.User }}'
+      loop: "{{ mtws_domains }}"
+      when:
+        - item.Type == 'Local'
+
+    - name: Create vhost configuration files
+      ansible.builtin.template:
+        src: "multi-tenant-webserver/vhost-conf.j2"
+        dest: "/etc/apache2/sites-available/{{ item.ID }}-{{ item.ServerName }}.conf"
+        owner: root
+        group: root
+        mode: '0644'
+      loop: "{{ mtws_domains }}"
+
+    - name: Activate vHost Configuration
+      ansible.builtin.shell: a2ensite {{ item.ID }}-{{ item.ServerName }}.conf
+      loop: "{{ mtws_domains }}"
+      when:
+        - item.Enabled is true
+      tags:
+        - configuration
+        - apache
+
+    - name: Deactivate vHost Configuration
+      ansible.builtin.shell: a2dissite {{ item.ID }}-{{ item.ServerName }}.conf
+      loop: "{{ mtws_domains }}"
+      when:
+        - item.Enabled is false
+      tags:
+        - configuration
+        - apache
+
+    - name: Restart Apache
+      ansible.builtin.service:
+        name: apache2
+        state: stopped
+      tags:
+        - configuration
+        - apache
+    - name: Restart Apache
+      ansible.builtin.service:
+        name: apache2
+        state: started
+      tags:
+        - configuration
+        - apache

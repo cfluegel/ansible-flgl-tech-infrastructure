@@ -1,0 +1,10 @@
+<VirtualHost *:80>
+        ServerName {{ item.ServerName }}
+        Redirect permanent / {{ item.Redirect_Target }}
+</VirtualHost>
+
+<VirtualHost *:443>
+        ServerName {{ item.ServerName }}
+        ServerAlias {{ item.ServerAlias }}
+        Redirect permanent / {{ item.Redirect_Target }}
+</VirtualHost>
