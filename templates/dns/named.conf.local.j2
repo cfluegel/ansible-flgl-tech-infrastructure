@@ -9,9 +9,12 @@ zone "{{ zone.name }}" {
 	type {{ zone.type }};
 	file "db.{{ zone.name }}";
 	notify {{ zone.notify }};
-	allow-transfer {
+
+	{% if zone.allow_transfer_from is defined and zone.allow_transfer_from  %}
+  allow-transfer {
 	{% for acl in zone.allow_transfer_from %}
 		{{ acl }};	{% endfor %}
 	};
+  {% endif %}
 };
 {% endfor %}

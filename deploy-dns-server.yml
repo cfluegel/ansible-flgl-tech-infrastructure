@@ -144,6 +144,40 @@
         - configuration
         - zonefiles
 
+    - name: Test zone files with named-checkzone
+      ansible.builtin.shell:
+        chdir: /var/cache/bind/
+        cmd: named-checkzone {{ item.name }} /var/cache/bind/db.{{ item.name }}
+      with_items: "{{ dns_zones }}"
+      register: dns_check_results
+      tags:
+        - test
+        - zonefiles
+
+    - ansible.builtin.debug:
+        var: dns_check_results
+      tags:
+        - test
+        - zonefiles
+
+    - ansible.builtin.debug:
+        msg: "Zonefile check completet with: {{ dns_check_results.msg }}"
+      tags:
+        - test
+        - zonefiles
+
+    - ansible.builtin.debug:
+        msg:
+          - "DNS Zone: '{{ item.item.name }}'"
+          - "Error: "
+          - "{{ item.stderr }}"
+      with_items: "{{ dns_check_results.results }}"
+      when:
+        - item.rc != 0
+      tags:
+        - test
+        - zonefiles
+
   handlers:
     - name: Restart bind
       ansible.builtin.service:
