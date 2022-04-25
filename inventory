@@ -2,20 +2,20 @@ all:
   children:
     dns:
       hosts:
-        dns1.flgl.tech
+        dns1.flgl.tech:
     webserver:
       hosts:
-        www.fluegel.cloud
-        www1.flgl.tech
+        www.fluegel.cloud:
+        www1.flgl.tech:
     mailcow:
       hosts:
-        mail.flgl.tech
+        mail.flgl.tech:
     matrix:
       hosts:
-        matrix.flgl.tech
+        matrix.flgl.tech:
     nextcloud:
       hosts:
-        www.fluegel.cloud
+        www.fluegel.cloud:
     www-multi-tenant:
       hosts:
-        www1.flgl.tech
+        www1.flgl.tech:
