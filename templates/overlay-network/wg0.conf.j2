@@ -1,0 +1,23 @@
+[Interface]
+Address =  {{ overlay_network_ip }}
+PrivateKey = {{ wg_private_key.stdout }}
+
+{% for host in groups['all'] %}
+[Peer]
+Endpoint = {{ hostvars[host].inventory_hostname }}:{{ overlay_network_port }}
+PublicKey = {{ hostvars[host].wg_public_key.stdout }}
+AllowedIPs = {{ hostvars[host].overlay_network_ip | trim }}/32
+PersisteentKeepalive = 60
+
+{% endfor %}
+
+
+### Additionally allowed hosts:
+{% for host in overlay_allow_additional_connections %}
+[Peer]
+# {{ host.name }}
+PublicKey = {{ host.wg_public_key }}
+AllowedIPs = {{ host.overlay_network_ip | trim }}/32
+PersisteentKeepalive = 60
+
+{% endfor %}

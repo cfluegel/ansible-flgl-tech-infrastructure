@@ -1,0 +1,143 @@
+---
+- name: Install wireguard and create private-public keypair
+  hosts: all
+  remote_user: root
+  gather_facts: no
+
+  # vars_files:
+  #   - "secrets/{{ inventory_hostname }}.yml"
+
+  tasks:
+    - name: Install of packages
+      ansible.builtin.apt:
+        state: latest
+        pkg:
+          - wireguard
+          - wireguard-dkms
+          - wireguard-tools
+      tags:
+        - installation
+        - packages
+
+    - name: Check if Wireguard directory exists
+      ansible.builtin.stat:
+        path: /etc/wireguard
+      register: check_wg_confdir
+      tags:
+        - check
+        - configuartion
+
+    - name: Create Wireguard Conf directory if it does not exists
+      ansible.builtin.file:
+        path: /etc/wireguard
+      register: check_wg_confdir
+      tags:
+        - check
+        - configuartion
+
+    - name: Check if Wireguard Private Key for the Backup already exists
+      ansible.builtin.stat:
+        state: directory
+        owner: root
+        group: root
+        mode: '0700'
+        path: /etc/wireguard/overlay_privatekey
+      when:
+        - check_wg_confdir.stat.exists != True
+      tags:
+        - keycreation
+        - configuartion
+
+    - name: Check if Wireguard Public Key for the Backup already exists
+      ansible.builtin.stat:
+        path: /etc/wireguard/overlay_privatekey
+      register: check_wg_pubkey
+      tags:
+        - keycreation
+        - configuartion
+
+    - name: Create Wireguard Private Key
+      ansible.builtin.shell:
+        cmd: wg genkey > /etc/wireguard/overlay_privatekey
+      when:
+        - check_wg_privkey.stat.exists != True
+      tags:
+        - keycreation
+        - configuartion
+
+    - name: Create Wireguard Public Key
+      ansible.builtin.shell:
+        cmd: wg pubkey < /etc/wireguard/overlay_privatekey > /etc/wireguard/overlay_publickey
+      when:
+        - check_wg_pubkey.stat.exists != True
+      tags:
+        - keycreation
+        - configuartion
+
+    - name: Change Filepermission of both files
+      ansible.builtin.file:
+        mode: '0600'
+        path: '{{ item }}'
+        state: file
+      loop:
+        - /etc/wireguard/overlay_privatekey
+        - /etc/wireguard/overlay_publickey
+      tags:
+        - keycreation
+        - configuartion
+
+- name: Gather additional facts about each host
+  hosts: all
+  remote_user: root
+
+  tasks:
+    - name: Read and register public wireguard key
+      ansible.builtin.shell: cat /etc/wireguard/overlay_publickey
+      register: wg_public_key
+
+    - name: Read and register public wireguard key
+      ansible.builtin.shell: cat /etc/wireguard/overlay_privatekey
+      register: wg_private_key
+
+    - name: Output the public Wireguard Key of each host
+      ansible.builtin.debug:
+        var: wg_public_key.stdout
+
+    - name: Output the private Wireguard Key of each host
+      ansible.builtin.debug:
+        var: wg_private_key.stdout
+
+    - name: Find own IP for the overlay network
+      ansible.builtin.set_fact:
+        overlay_network_ip: "{{ lookup('community.general.dig', inventory_hostname + '.overlay.flgl.network.' , 'qtype=A') }} "
+      tags:
+        - dnslookup
+    - ansible.builtin.debug:
+        var: overlay_network_ip
+      tags:
+        - dnslookup
+
+- name: Create configuration file and activate
+  hosts: all
+  remote_user: root
+  gather_facts: no
+
+  tasks:
+    - name: Generate wg0.conf
+      ansible.builtin.template:
+        src: overlay-network/wg0.conf.j2
+        dest: /etc/wireguard/wg0.conf
+        owner: root
+        group: root
+        mode: '0600'
+      tags:
+        - configuration
+
+    - name: Enable the wireguard quick service for wg0.conf
+      ansible.builtin.service:
+        enabled: yes
+        state: started
+        name: wg-quick@wg0
+      tags:
+        - configuration
+        - startup

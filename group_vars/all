@@ -14,3 +14,12 @@ certbot_auto_renew_options: "--quiet --no-self-upgrade"
 
 certbot_create_standalone_stop_services:
   - apache2
+
+overlay_network_port: 42069
+overlay_allow_additional_connections:
+  - name: backup1
+    wg_public_key: 9fIzH4DG8/b8UqWbTYQp3uqCOe/fAYDuX0tNIZPxPQc=
+    overlay_network_ip: 192.168.254.100
+  - name: backup2
+    wg_public_key: PdyKUGnXrPLxwMqsRVZzL1EnCZUPdTIuTkBNsVBishw=
+    overlay_network_ip: 192.168.254.101

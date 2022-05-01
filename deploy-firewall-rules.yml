@@ -29,6 +29,15 @@
         - configuration
         - firewall
 
+    - name: Allow overlay network port through the firewall
+      community.general.ufw:
+        rule: allow
+        port: "{{ overlay_network_port }}"
+        proto: udp
+      tags:
+        - configuration
+        - firewall
+
     - name: Allow all outgoing default
       community.general.ufw:
         direction: outgoing
@@ -81,7 +90,7 @@
         - configuration
         - firewall
 
-- hosts: www-multi-tenant:nextcloud
+- hosts: www-multi-tenant:nextcloud:webserver
   remote_user: root
 
   tasks:
