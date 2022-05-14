@@ -5,3 +5,4 @@ collections:
 
 roles:
   - geerlingguy.certbot
+  - geerlingguy.docker
