@@ -23,7 +23,10 @@
 # Use the ServerName as target for this Redirect
 <VirtualHost *:80>
     ServerName {{ item.ServerName }}
+    {% if item.ServerAlias != '' -%}
     ServerAlias {{ item.ServerAlias }}
+    {% endif -%}
+
     Redirect / https://{{ item.ServerName }}/
 </VirtualHost>
 

@@ -8,7 +8,7 @@
     - "secrets/{{ inventory_hostname }}.yml"
 
   roles:
-    - geerlingguy.certbot
+    - certbot-with-expand
   tags:
     - ssl
     - roles
