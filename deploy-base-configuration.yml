@@ -13,8 +13,10 @@
         - sshpubkeys/sshgpgkey2
         - sshpubkeys/defaultkey1
         - sshpubkeys/cfluegelmacmini1
+        - sshpubkeys/cfluegelipad
       tags:
         - configuration
+        - sshkeys
         - ssh
 
     - name: Deploy a sshd configuration
