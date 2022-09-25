@@ -14,6 +14,8 @@
         - sshpubkeys/defaultkey1
         - sshpubkeys/cfluegelmacmini1
         - sshpubkeys/cfluegelipad
+        - sshpubkeys/securitykey1
+        - sshpubkeys/windows11
       tags:
         - configuration
         - sshkeys
