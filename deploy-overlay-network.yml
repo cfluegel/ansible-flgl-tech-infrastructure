@@ -1,6 +1,6 @@
 ---
 - name: Install wireguard and create private-public keypair
-  hosts: all
+  hosts: overlaynetwork
   remote_user: root
   gather_facts: no
 
@@ -87,7 +87,7 @@
         - configuartion
 
 - name: Gather additional facts about each host
-  hosts: all
+  hosts: overlaynetwork
   remote_user: root
 
   tasks:
@@ -118,7 +118,7 @@
         - dnslookup
 
 - name: Create configuration file and activate
-  hosts: all
+  hosts: overlaynetwork
   remote_user: root
   gather_facts: no
 
