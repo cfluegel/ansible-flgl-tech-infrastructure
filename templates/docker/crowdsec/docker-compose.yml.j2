@@ -1,0 +1,39 @@
+version: "3.9"
+services:
+  crowdsec:
+    container_name: crowdsec
+    image: crowdsecurity/crowdsec:latest
+    environment:
+      PGID: "1000"
+      COLLECTIONS: "crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/whitelist-good-actors"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config:/etc/crowdsec
+      - ./data:/var/lib/crowdsec/data
+      - /var/log/auth.log:/var/log/auth.log:ro
+      - /var/log/crowdsec:/var/log/crowdsec:ro
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges=true
+    networks:
+      - proxy
+    hostname: crowdsec
+
+  bouncer-traefik:
+    container_name: crowdsec-bouncer-traefik
+    image: fbonalair/traefik-crowdsec-bouncer:latest
+    environment:
+      CROWDSEC_BOUNCER_API_KEY: ${TRAEFIK_BOUNCER_KEY}
+      CROWDSEC_AGENT_HOST: crowdsec:8080
+    restart: unless-stopped
+    depends_on:
+      - crowdsec
+    networks:
+      - proxy
+    hostname: crowdsec-bouncer-traefik
+
+
+networks:
+  proxy:
+    external: true

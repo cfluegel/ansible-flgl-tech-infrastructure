@@ -19,3 +19,13 @@ all:
     www-multi-tenant:
       hosts:
         www1.flgl.tech:
+    overlaynetwork:
+      hosts:
+        www1.flgl.tech:
+        matrix.flgl.tech:
+        www.fluegel.cloud:
+        mail.flgl.tech:
+        dns1.flgl.tech:
+    docker:
+      hosts:
+        docker01.flgl.tech:

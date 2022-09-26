@@ -1,0 +1,56 @@
+# Statische Traefik-Konfigurationsdatei
+# https://doc.traefik.io/traefik/getting-started/configuration-overview/#the-static-configuration
+# https://doc.traefik.io/traefik/reference/static-configuration/cli/
+
+api:
+  dashboard: true                             # Aktivieren des Dashboard
+
+# Certificate Resolver
+# Diese sind für den Abruf von Zertifikaten von einem ACME-Server zuständig
+# https://doc.traefik.io/traefik/https/acme/#certificate-resolvers
+certificatesResolvers:
+  http:
+    acme:
+      email: "traefik-certs@speicherzugriffsfehler.de"                 # E-Mail-Adresse für die Registrierung
+      storage: "acme_letsencrypt.json"        # Datei für die Speicherung von Zertifikate (Ich weiche hier bewusst von dem "Standard": acme.json ab)
+      httpChallenge:
+        entryPoint: http
+
+# EntryPoints
+# EntryPoints sind die Netzwerk-Eingangspunkte in Traefik. Sie definieren den Port, der die Pakete empfängt.
+# https://doc.traefik.io/traefik/routing/entrypoints/
+entryPoints:
+  http:
+    address: ":80"                            # Erstellen des Einstiegspunkt für HTTP (Port 80)
+    http:
+      redirections:                           # Weiterleitung von HTTP auf HTTPS (Port 80 zu Port 443).
+        entryPoint:
+          to: "https"                         # Das Ziel
+          scheme: "https"                     # Umleitungszielschema
+  https:
+    address: ":443"                           # Erstellen des Einstiegspunkt für HTTPS (Port 443)
+    http:
+      middlewares:
+        - crowdsec-bouncer@file
+
+global:
+  checknewversion: true                       # In regelmäßigen Abständen prüfen, ob eine neue Version veröffentlicht wurde.
+  sendanonymoususage: false                   # Regelmäßige Übermittlung anonymer Nutzungsstatistiken.
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"   # Den UNIX Docker socket beobachten
+    exposedByDefault: false                   # Nur Container ausstellen, die explizit aktiviert sind (mit dem Label traefik.enabled)
+    network: "proxy"                          # Standardnetzwerk, das für Verbindungen zu allen Containern verwendet wird.
+  file:
+    filename: "./dynamic_conf.yml"            # Link zur dynamischen Konfiguration
+    watch: true                               # Achten auf Änderungen
+  providersThrottleDuration: 10               # Frequenz in welchen Abständen die Konfiguration nachgeladen wird
+
+log:
+  level: "INFO"
+  filePath: "/var/log/traefik/traefik.log"
+
+accessLog:
+  filePath: "/var/log/traefik/access.log"
+  bufferingSize: 100

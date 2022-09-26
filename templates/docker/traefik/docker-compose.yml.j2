@@ -1,0 +1,60 @@
+version: '3.9'
+services:
+  traefik:
+    container_name: traefik
+    image: traefik:latest
+    volumes:
+      # Traefik mit der Zeit vom Server syncronisieren
+      - /etc/localtime:/etc/localtime:ro
+
+      # Lesezugriff auf den UNIX Docker socket
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+      # Traefik-Konfiguration bereitstellen
+      - ./data/traefik.yml:/traefik.yml:ro
+
+      # Datei mit Zertifikaten bereitstellen
+      - ./data/acme_letsencrypt.json:/acme_letsencrypt.json
+
+      # Datei mit dynamischer Konfiguration bereitstellen
+      - ./data/dynamic_conf.yml:/dynamic_conf.yml
+
+      # Crowdsec
+      - /var/log/crowdsec/traefik/:/var/log/traefik/
+    labels:
+      # Traefik durch Watchtower aktualisieren lassen
+      # https://goneuland.de/docker-images-automatisiert-aktualisieren-mit-watchtower/
+      - "com.centurylinklabs.watchtower.enable=true"
+      # Traefik für Traefik aktivieren
+      - "traefik.enable=true"
+      # Als Einstiegspunkt wählen wir direkt HTTPS
+      - "traefik.http.routers.traefik.entrypoints=https"
+      # Domain anpassen unter der Traefik erreichbar sein soll.
+      - "traefik.http.routers.traefik.rule=Host(`docker01.flgl.tech`)"
+      # Middlewares definieren, welche verwendet werden sollen. Hier die Authentifizierung via htpasswd + alle die unter default definiert sind.
+      - "traefik.http.routers.traefik.middlewares=traefikAuth@file,default@file"
+      # SSL Zertifikat abrufen
+      - "traefik.http.routers.traefik.tls=false"
+      # Definierten Zertifikat Resolver aus traefik.yml wählen
+      - "traefik.http.routers.traefik.tls.certresolver=http"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.services.traefik.loadbalancer.server.port=80"
+      - "traefik.http.services.traefik.loadbalancer.sticky.cookie.httpOnly=true"
+      - "traefik.http.services.traefik.loadbalancer.sticky.cookie.secure=true"
+     # Traefik dem Proxy-Netzwerk hinzufügen.
+      - "traefik.docker.network=proxy"
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
+    hostname: traefik
+    ports:
+      # Ports definieren, welche durch Traefik gemanaget werden.
+      - "80:80"
+      - "443:443"
+networks:
+  proxy:
+    name: proxy
+    driver: bridge
+    attachable: true

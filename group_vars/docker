@@ -1,0 +1,16 @@
+---
+docker_install_compose_plugin: true
+docker_compose_package: docker-compose-plugin
+docker_compose_package_state: present
+
+docker_install_compose: false
+
+# A list of users who will be added to the docker group.
+docker_users: []
+
+
+###
+docker__force_recrate: no
+
+# Empty variable t
+crowdsec_bouncer_key: ""

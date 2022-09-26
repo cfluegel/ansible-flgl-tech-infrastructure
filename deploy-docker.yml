@@ -1,0 +1,220 @@
+---
+- name: Install Docker and Docker-Compose
+  hosts: docker
+  remote_user: root
+
+  roles:
+    - geerlingguy.docker
+
+  tasks:
+    - name: Update and Upgrade Packages
+      ansible.builtin.apt:
+        update_cache: yes
+      tags:
+        - installation
+        - packages
+
+    - name: Update all packages to their latest version
+      ansible.builtin.apt:
+        name: "*"
+        state: latest
+
+    - name: Install some useful packages
+      ansible.builtin.apt:
+        state: present
+        pkg:
+          - apache2-utils
+      tags:
+        - installation
+        - packages
+
+    - name: Create user
+      ansible.builtin.user:
+        name: cfluegel
+        shell: /bin/bash
+        state: present
+
+
+- name: Initial Steps
+  hosts: docker
+  remote_user: root
+
+  tasks:
+    - name: 🔥 Burn Burn Burn 🔥
+      shell:
+        cmd: "docker rm -f $(docker ps -a -q)"
+        chdir: /opt/docker/crowdsec/
+      when: docker__force_recrate
+
+    - name: 🧹 Sweep the ashes so beauty can rise again
+      ansible.builtin.file:
+        path: /opt/docker/
+        state: absent
+      when: docker__force_recrate
+
+    - name: Create /opt/docker directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /opt/docker/
+
+    - name: 🔥 Burn Burn Burn 🔥
+      shell:
+        cmd: "docker kill $(docker ps -q)"
+        chdir: /opt/docker/crowdsec/
+      when: not docker__force_recrate
+
+
+- name: Install traefik
+  hosts: docker
+  remote_user: root
+
+  tasks:
+    - name: Create traefik docker directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /opt/docker/traefik
+
+    - name: Create traefik data directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /opt/docker/traefik/data
+
+    - name: Create acme_letsencrypt.json
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0600'
+        state: touch
+        path: /opt/docker/traefik/data/acme_letsencrypt.json
+
+    - name: Deploy traefik docker-compose.yml
+      ansible.builtin.template:
+        src: docker/traefik/docker-compose.yml.j2
+        dest: /opt/docker/traefik/docker-compose.yml
+        mode: '0664'
+        owner: root
+        group: root
+
+    - name: deploy dynamic_conf.yml.j2
+      ansible.builtin.template:
+        src: docker/traefik/dynamic_conf.yml.j2
+        dest: /opt/docker/traefik/data/dynamic_conf.yml
+        mode: '0664'
+        owner: root
+        group: root
+
+    - name: deploy traefik.yml.j2
+      ansible.builtin.template:
+        src: docker/traefik/traefik.yml.j2
+        dest: /opt/docker/traefik/data/traefik.yml
+        mode: '0664'
+        owner: root
+        group: root
+
+ ### https://stackoverflow.com/questions/62452039/how-to-run-docker-compose-commands-with-ansible
+    - name: Run traefik docker compose
+      become: True
+      shell:
+        cmd: "docker compose up -d --force-recreate"
+        chdir: /opt/docker/traefik
+
+
+- name: Install CrowdSec
+  hosts: docker
+  remote_user: root
+
+  tasks:
+    - name: Create CrowdSec docker directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /opt/docker/crowdsec
+
+    - name: Create CrowdSec config docker directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /opt/docker/crowdsec/config
+
+    - name: Create CrowdSec data docker directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /opt/docker/crowdsec/data
+
+    - name: Create .env file
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0664'
+        state: touch
+        path: /opt/docker/crowdsec/.env
+
+    - name: Deploy the crowdsec docker-compose.yml
+      ansible.builtin.template:
+        src: docker/crowdsec/docker-compose.yml.j2
+        dest: /opt/docker/crowdsec/docker-compose.yml
+        owner: root
+        group: root
+        mode: '0664'
+
+    - name: Start only the crowdsec container
+      shell:
+        cmd: "docker compose up -d crowdsec"
+        chdir: /opt/docker/crowdsec/
+
+      # docker compose exec -t crowdsec cscli bouncers add bouncer-traefik
+    - name: Generate the crowdsec bouncer api key
+      shell:
+        cmd: "docker compose exec -t crowdsec cscli bouncers add bouncer-traefik"
+        chdir: /opt/docker/crowdsec/
+      register: temp_docker_crowdsec_api
+
+    - name: Print out the bouncer api key
+      debug:
+        msg: "Bounter-Traefik API Key: {{ temp_docker_crowdsec_api.stdout_lines[2] | trim }}"
+
+    - name: Fill the crowdsec bouncer API key
+      ansible.builtin.template:
+        src: docker/crowdsec/env.j2
+        dest: /opt/docker/crowdsec/.env
+        mode: '0664'
+
+    - name: Deploy acquis.yml
+      ansible.builtin.template:
+        src: docker/crowdsec/acquis.yaml.j2
+        dest: /opt/docker/crowdsec/config/acquis.yaml
+        owner: root
+        group: root
+        mode: '0664'
+
+
+- name: Start everything up (finally)
+  hosts: docker
+  remote_user: root
+
+  tasks:
+    - name: Run crowdsec container
+      shell:
+        cmd: "docker compose up -d --force-recreate"
+        chdir: /opt/docker/crowdsec/
+
+    - name: Run traefik docker compose
+      shell:
+        cmd: "docker compose up -d --force-recreate"
+        chdir: /opt/docker/traefik
