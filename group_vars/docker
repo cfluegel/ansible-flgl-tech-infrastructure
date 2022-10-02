@@ -9,8 +9,16 @@ docker_install_compose: false
 docker_users: []
 
 
-###
+### Warning. This can be problematic as you have to request new ssl certificates
+# doing this too often will cause a rate limit error for acme lets encrypt
 docker__force_recrate: no
 
-# Empty variable t
+# Empty variable as placeholder.
+# will be filled during the initial deployment
 crowdsec_bouncer_key: ""
+
+# Privatebin instance
+privatebin_name: "PrivateBin"
+privatebin_fqdn: "privatebin.flgl.tech"
+privatebin_uid: 33
+privatebin_gid: 33

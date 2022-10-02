@@ -1,0 +1,53 @@
+---
+- name: Install Docker and Docker-Compose
+  hosts: docker
+  remote_user: root
+
+  vars_files:
+    - "secrets/{{ inventory_hostname }}.yml"
+
+  tasks:
+    - name: Create PrivateBin directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /opt/docker/privatebin
+
+    - name: Create config directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /opt/docker/privatebin/config
+
+    - name: Create data directory
+      ansible.builtin.file:
+        owner: '{{ privatebin_uid }}'
+        group: '{{ privatebin_gid }}'
+        mode: '0700'
+        state: directory
+        path: /opt/docker/privatebin/data
+
+    - name: Deploy the Privatebin docker-compose.yml
+      ansible.builtin.template:
+        src: docker/privatebin/docker-compose.yml.j2
+        dest: /opt/docker/privatebin/docker-compose.yml
+        owner: root
+        group: root
+        mode: '0664'
+
+    - name: Deploy the Privatebin config.php
+      ansible.builtin.template:
+        src: docker/privatebin/conf.php.j2
+        dest: /opt/docker/privatebin/config/conf.php
+        owner: root
+        group: root
+        mode: '0664'
+
+    # - name: Run Privatebin docker compose
+    #   shell:
+    #     cmd: "docker compose up -d --force-recreate"
+    #     chdir: /opt/docker/privatebin
