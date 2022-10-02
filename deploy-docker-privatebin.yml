@@ -1,5 +1,5 @@
 ---
-- name: Install Docker and Docker-Compose
+- name: Install Dockerized Privatebin
   hosts: docker
   remote_user: root
 
@@ -47,7 +47,7 @@
         group: root
         mode: '0664'
 
-    # - name: Run Privatebin docker compose
-    #   shell:
-    #     cmd: "docker compose up -d --force-recreate"
-    #     chdir: /opt/docker/privatebin
+    - name: Run Privatebin docker compose
+      shell:
+        cmd: "docker compose up -d --force-recreate"
+        chdir: /opt/docker/privatebin
