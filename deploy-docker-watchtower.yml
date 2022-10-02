@@ -1,0 +1,31 @@
+---
+- name: Install Docker and Docker-Compose
+  hosts: docker
+  remote_user: root
+
+  vars_files:
+    - "secrets/{{ inventory_hostname }}.yml"
+
+  tasks:
+    - name: Create Watchtower directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /opt/docker/watchtower
+
+    - name: Deploy the Watchtower docker-compose.yml
+      ansible.builtin.template:
+        src: docker/watchtower/docker-compose.yml.j2
+        dest: /opt/docker/watchtower/docker-compose.yml
+        owner: root
+        group: root
+        mode: '0664'
+
+    - name: Run watchtower docker compose
+      shell:
+        cmd: "docker compose up -d --force-recreate"
+        chdir: /opt/docker/watchtower
+
+# Quelle: https://goneuland.de/docker-images-automatisiert-aktualisieren-mit-watchtower/
