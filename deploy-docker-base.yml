@@ -18,6 +18,9 @@
       ansible.builtin.apt:
         name: "*"
         state: latest
+      tags:
+        - installation
+        - packages
 
     - name: Install some useful packages
       ansible.builtin.apt:
@@ -35,7 +38,7 @@
         state: present
 
 
-- name: Initial Steps
+- name: Pre Installation Steps
   hosts: docker
   remote_user: root
 
@@ -60,7 +63,7 @@
         state: directory
         path: /opt/docker/
 
-    - name: 🔥 Burn Burn Burn 🔥
+    - name: Stop all container
       shell:
         cmd: "docker kill $(docker ps -q)"
         chdir: /opt/docker/crowdsec/
@@ -88,6 +91,11 @@
         state: directory
         path: /opt/docker/traefik/data
 
+    - name: Check the existence of acme_letsencrypt.json
+      ansible.builtin.stat:
+        path: /opt/docker/traefik/data/acme_letsencrypt.json
+      register: docker__traefik_letsencrypt_json
+
     - name: Create acme_letsencrypt.json
       ansible.builtin.file:
         owner: root
@@ -95,6 +103,7 @@
         mode: '0600'
         state: touch
         path: /opt/docker/traefik/data/acme_letsencrypt.json
+      when: not docker__traefik_letsencrypt_json.exists
 
     - name: Deploy traefik docker-compose.yml
       ansible.builtin.template:
@@ -111,6 +120,8 @@
         mode: '0664'
         owner: root
         group: root
+      tags:
+        - configuration
 
     - name: deploy traefik.yml.j2
       ansible.builtin.template:
@@ -119,6 +130,8 @@
         mode: '0664'
         owner: root
         group: root
+      tags:
+        - configuration
 
  ### https://stackoverflow.com/questions/62452039/how-to-run-docker-compose-commands-with-ansible
     - name: Run traefik docker compose
@@ -131,6 +144,9 @@
 - name: Install CrowdSec
   hosts: docker
   remote_user: root
+
+  vars_files:
+    - "secrets/{{ inventory_hostname }}.yml"
 
   tasks:
     - name: Create CrowdSec docker directory
@@ -149,6 +165,11 @@
         state: directory
         path: /opt/docker/crowdsec/config
 
+    - shell:
+        cmd: "ls -1 |wc -l"
+        chdir: /opt/docker/crowdsec/config/
+      register: docker__crowdsec_config_ls
+
     - name: Create CrowdSec data docker directory
       ansible.builtin.file:
         owner: root
@@ -156,14 +177,6 @@
         mode: '0775'
         state: directory
         path: /opt/docker/crowdsec/data
-
-    - name: Create .env file
-      ansible.builtin.file:
-        owner: root
-        group: root
-        mode: '0664'
-        state: touch
-        path: /opt/docker/crowdsec/.env
 
     - name: Deploy the crowdsec docker-compose.yml
       ansible.builtin.template:
@@ -177,32 +190,67 @@
       shell:
         cmd: "docker compose up -d crowdsec"
         chdir: /opt/docker/crowdsec/
+      when: docker__crowdsec_config_ls | int == 0
 
       # docker compose exec -t crowdsec cscli bouncers add bouncer-traefik
     - name: Generate the crowdsec bouncer api key
       shell:
         cmd: "docker compose exec -t crowdsec cscli bouncers add bouncer-traefik"
         chdir: /opt/docker/crowdsec/
+      when: docker__crowdsec_config_ls | int == 0
       register: temp_docker_crowdsec_api
 
     - name: Print out the bouncer api key
       debug:
         msg: "Bounter-Traefik API Key: {{ temp_docker_crowdsec_api.stdout_lines[2] | trim }}"
+      when: docker__crowdsec_config_ls | int == 0
 
     - name: Fill the crowdsec bouncer API key
       ansible.builtin.template:
         src: docker/crowdsec/env.j2
         dest: /opt/docker/crowdsec/.env
         mode: '0664'
+      when: docker__crowdsec_config_ls | int == 0
 
-    - name: Deploy acquis.yml
+    - name: Stop  the crowdsec container
+      shell:
+        cmd: "docker compose down"
+        chdir: /opt/docker/crowdsec/
+      when: docker__crowdsec_config_ls | int == 0
+
+    - name: Deploy acquis.yaml
       ansible.builtin.template:
         src: docker/crowdsec/acquis.yaml.j2
         dest: /opt/docker/crowdsec/config/acquis.yaml
         owner: root
         group: root
         mode: '0664'
+      tags:
+        - configuration
 
+    - name: Deploy discord.yaml
+      ansible.builtin.template:
+        src: docker/crowdsec/discord.yaml.j2
+        dest: /opt/docker/crowdsec/config/notifications/discord.yaml
+        owner: root
+        group: root
+        mode: '0664'
+        block_end_string: '%]'
+        block_start_string: '[%'
+        variable_end_string: ']]'
+        variable_start_string: '[['
+      tags:
+        - configuration
+
+    - name: Deploy profiles.yaml
+      ansible.builtin.template:
+        src: docker/crowdsec/profiles.yaml.j2
+        dest: /opt/docker/crowdsec/config/profiles.yaml
+        owner: root
+        group: root
+        mode: '0664'
+      tags:
+        - configuration
 
 - name: Start everything up (finally)
   hosts: docker
