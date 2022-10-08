@@ -1,0 +1,30 @@
+---
+- name: Deploy dockerized static websites
+  hosts: docker
+  remote_user: root
+
+  vars_files:
+    - "secrets/{{ inventory_hostname }}.yml"
+
+  tasks:
+    - name: Create directory for static websites
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /opt/docker/staticwebsites
+
+
+    - name: Deploy the  docker-compose.yml
+      ansible.builtin.template:
+        src: docker/static-websites/docker-compose.yml.j2
+        dest: /opt/docker/staticwebsites/docker-compose.yml
+        owner: root
+        group: root
+        mode: '0664'
+
+    # - name: Run docker compose
+    #   shell:
+    #     cmd: "docker compose up -d --force-recreate"
+    #     chdir: /opt/docker/staticwebsites
