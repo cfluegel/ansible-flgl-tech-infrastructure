@@ -22,3 +22,19 @@ privatebin_name: "PrivateBin"
 privatebin_fqdn: "privatebin.flgl.tech"
 privatebin_uid: 33
 privatebin_gid: 33
+
+# Bitwarden
+bitwarden_fqdn: bitwarden.flgl.tech
+
+# nextcloud
+nextcloud_fqdn: cloud.flgl.tech
+nextcloud_traefik_name: nextcloud
+nextcloud_internal_networkname: default
+
+# the following variables are set in the secured docker variable file 
+# nextcloud_smtp_host:
+# nextcloud_smtp_secure:
+# nextcloud_smtp_username:
+# nextcloud_smtp_password:
+# nextcloud_smtp_mail_from:
+# nextcloud_smtp_domain:    # might not be necessary when mail_from is used .. have to verfiy

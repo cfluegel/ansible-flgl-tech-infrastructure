@@ -1,0 +1,86 @@
+version: '3.9'
+
+services:
+  nextcloud-db:
+    image: mariadb
+    # container_name: nextcloud-db
+    command: --transaction-isolation=READ-COMMITTED --log-bin=ROW --innodb_read_only_compressed=OFF
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - ./data/database:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: {{ nextcloud_db_root_pass }}
+      MYSQL_PASSWORD: {{ nextcloud_db_user_pass }}
+      MYSQL_DATABASE: {{ nextcloud_db_name }}
+      MYSQL_USER: {{ nextcloud_db_username }}
+      MYSQL_INITDB_SKIP_TZINFO: 1
+    networks:
+      - {{ nextcloud_internal_networkname }}
+
+  nextcloud-redis:
+    image: redis:alpine
+    # container_name: nextcloud-redis
+    hostname: nextcloud-redis
+    restart: unless-stopped
+    command: redis-server --requirepass {{ nextcloud_redis_pw }}
+    networks:
+        - {{ nextcloud_internal_networkname }}
+
+  nextcloud-app:
+    image: nextcloud
+    # container_name: nextcloud-app
+    restart: unless-stopped
+    depends_on:
+      - nextcloud-db
+      - nextcloud-redis
+    environment:
+        TRUSTED_PROXIES: {{ docker__nextcloud_gateway[0] }}/16
+        OVERWRITEPROTOCOL: https
+        OVERWRITECLIURL: https://{{ nextcloud_fqdn }}
+        OVERWRITEHOST: {{ nextcloud_fqdn }}
+        REDIS_HOST: {{ nextcloud_instance }}-nextcloud-redis-1
+        REDIS_HOST_PASSWORD: {{ nextcloud_redis_pw }}
+        MYSQL_DATABASE: {{ nextcloud_db_name }}
+        MYSQL_USER: {{ nextcloud_db_username }}
+        MYSQL_PASSWORD: {{ nextcloud_db_user_pass }}
+        MYSQL_HOST: {{ nextcloud_instance }}-nextcloud-db-1
+        NEXTCLOUD_ADMIN_USER: {{ nextcloud_admin_username }}
+        NEXTCLOUD_ADMIN_PASSWORD: {{ nextcloud_admin_password }}
+{% if nextcloud_smtp_host is defined and nextcloud_smtp_host %}
+        SMTP_HOST: {{ nextcloud_smtp_host }}
+        SMTP_SECURE: {{ nextcloud_smtp_secure }}
+        SMTP_PORT: {{ nextcloud_smtp_port }}
+        SMTP_AUTHTYPE: LOGIN
+        SMTP_NAME: {{ nextcloud_smtp_username }}
+        SMTP_PASSWORD: {{ nextcloud_smtp_password }}
+        MAIL_FROM_ADDRESS: {{ nextcloud_smtp_mail_from }}
+        MAIL_DOMAIN: {{ nextcloud_smtp_maildomin }}
+{% endif %}
+    volumes:
+      - ./data/nextcloud/app:/var/www/html
+      - ./data/nextcloud/data:/var/www/html/data
+      - /var/log/nextcloud.log:/var/www/html/data/nextcloud.log:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.{{ nextcloud_traefik_name }}.entrypoints=https"
+      - "traefik.http.routers.{{ nextcloud_traefik_name }}.rule=(Host(`{{ nextcloud_fqdn }}`))"
+      - "traefik.http.routers.{{ nextcloud_traefik_name }}.tls=true"
+      - "traefik.http.routers.{{ nextcloud_traefik_name }}.tls.certresolver=http"
+      - "traefik.http.routers.{{ nextcloud_traefik_name }}.service={{ nextcloud_traefik_name }}"
+      - "traefik.http.services.{{ nextcloud_traefik_name }}.loadbalancer.server.port=80"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.{{ nextcloud_traefik_name }}.middlewares={{ nextcloud_traefik_name }}-dav,default@file"
+      - "traefik.http.middlewares.{{ nextcloud_traefik_name }}-dav.replacepathregex.regex=^/.well-known/ca(l|rd)dav"
+      - "traefik.http.middlewares.{{ nextcloud_traefik_name }}-dav.replacepathregex.replacement=/remote.php/dav/"
+    networks:
+      - proxy
+      - {{ nextcloud_internal_networkname }}
+
+networks:
+  proxy:
+    external: true
+{% if nextcloud_internal_networkname != "default" %}
+  {{ nextcloud_instance }}Network:
+{% endif %}

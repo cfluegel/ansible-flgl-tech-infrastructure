@@ -1,0 +1,102 @@
+---
+- name: Install Dockerized Nextcloud
+  hosts: docker
+  remote_user: root
+
+  vars_files:
+    - "secrets/{{ inventory_hostname }}.yml"
+
+  tasks:
+    - name: Create Nextcloud directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: "{{ docker_base_dir }}/{{ nextcloud_instance }}"
+
+    - name: Create data directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: "{{ docker_base_dir }}/{{ nextcloud_instance }}/data"
+
+    - name: Create database directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: "{{ docker_base_dir }}/{{ nextcloud_instance }}/data/database"
+
+    - name: Create nextcloud directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: "{{ docker_base_dir }}/{{ nextcloud_instance }}/data/nextcloud"
+
+    - name: Create nextcloud app directory
+      ansible.builtin.file:
+        owner: 33
+        group: 33
+        mode: '0775'
+        state: directory
+        path: "{{ docker_base_dir }}/{{ nextcloud_instance }}/data/nextcloud/app"
+
+    - name: Create nextcloud data directory
+      ansible.builtin.file:
+        owner: 33
+        group: 33
+        mode: '0775'
+        state: directory
+        path: "{{ docker_base_dir }}/{{ nextcloud_instance }}/data/nextcloud/data"
+
+    - name: Create nextcloud log file
+      ansible.builtin.file:
+        owner: 33
+        group: 33
+        mode: '0775'
+        state: touch
+        path: "{{ docker_base_dir }}/{{ nextcloud_instance }}/data/nextcloud/data/nextcloud.log"
+
+    - name: Create nextcloud crowdsec log directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /var/log/crowdsec/nextcloud
+
+    - name: Create nextcloud crowdsec log directory
+      ansible.builtin.file:
+        owner: 33
+        group: 33
+        mode: '0775'
+        state: touch
+        path: /var/log/crowdsec/nextcloud/nextcloud.log
+
+    - name: Inspect the docker traefik container
+      ansible.builtin.shell:
+        cmd: "docker inspect traefik"
+      register: docker__nextcloud_traefik_ip
+
+    - name: Extract the traefik ip address
+      set_fact:
+        docker__nextcloud_gateway: "{{ docker__nextcloud_traefik_ip | regex_search('\"IPAddress\": \"(\\d+.\\d+.\\d+.\\d+)\"','\\1')  }}"
+
+    - name: Deploy the Nextcloud docker-compose.yml
+      ansible.builtin.template:
+        src: docker/nextcloud/docker-compose.yml.j2
+        dest: "{{ docker_base_dir }}/{{ nextcloud_instance }}/docker-compose.yml"
+        owner: root
+        group: root
+        mode: '0664'
+
+    # - name: Run Nextcloud docker compose
+    #   shell:
+    #     cmd: "docker compose up -d --force-recreate"
+    #     chdir: "{{ docker_base_dir }}/{{ nextcloud_instance }}"
