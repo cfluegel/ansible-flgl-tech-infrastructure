@@ -3,6 +3,19 @@ services:
   bitwarden:
     image: vaultwarden/server:latest
     restart: unless-stopped
+    environment:
+      # WEBSOCKET_ENABLED: "true"                           # Websocket (TODO: Traefik to route )
+      SIGNUPS_ALLOWED: false                                # deaktiviert die Registrierung
+      SIGNUPS_DOMAINS_WHITELIST: "flgl.tech,fluegel.name"   # erlaubt nur von bestimmten domains, setzt SIGNUP_ALLOWED auszer kraft
+      ADMIN_TOKEN: {{ bitwarden_admin_token }}
+      DOMAIN: "https://{{ bitwarden_fqdn }}"
+      SHOW_PASSWORD_HINT: false
+      SMTP_HOST: {{ bitwarden_smtp_host }}
+      SMTP_FROM: {{ bitwarden_smtp_mail_from }}
+      SMTP_PORT: 587
+      SMTP_SECURITY: starttls
+      SMTP_USERNAME: {{ bitwarden_smtp_username }}
+      SMTP_PASSWORD: {{ bitwarden_smtp_password }}
     volumes:
        - ./data:/data
     labels:
