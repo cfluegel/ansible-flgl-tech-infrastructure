@@ -69,6 +69,22 @@
         chdir: /opt/docker/crowdsec/
       when: not docker__force_recrate
 
+    - name: Create crowdsec base log directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /var/log/crowdsec/
+
+    - name: Create traefik crowdsec log directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /var/log/crowdsec/traefik
+
 
 - name: Install traefik
   hosts: docker

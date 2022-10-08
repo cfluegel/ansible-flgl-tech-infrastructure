@@ -11,8 +11,8 @@ api:
 certificatesResolvers:
   http:
     acme:
-      email: "traefik-certs@speicherzugriffsfehler.de"                 # E-Mail-Adresse für die Registrierung
-      storage: "acme_letsencrypt.json"        # Datei für die Speicherung von Zertifikate (Ich weiche hier bewusst von dem "Standard": acme.json ab)
+      email: "{{ certbot_admin_email }}"                 # E-Mail-Adresse für die Registrierung
+      storage: "acme_letsencrypt.json"                   # Datei für die Speicherung von Zertifikate (Ich weiche hier bewusst von dem "Standard": acme.json ab)
       httpChallenge:
         entryPoint: http
 
