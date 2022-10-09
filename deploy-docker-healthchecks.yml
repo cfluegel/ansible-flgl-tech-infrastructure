@@ -1,0 +1,61 @@
+---
+- name: Install Healtchecks instance
+  hosts: docker
+  remote_user: root
+
+  vars_files:
+    - "secrets/{{ inventory_hostname }}.yml"
+
+  tasks:
+    - name: Create healthchecks base directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /opt/docker/healthchecks
+
+    - name: Create healthchecks database directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /opt/docker/healthchecks/database
+
+    - name: Create healthchecks database backup directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /opt/docker/healthchecks/backups
+
+    - name: Deploy healthchecks docker-compose.yml
+      ansible.builtin.template:
+        src: docker/healthchecks/docker-compose.yml.j2
+        dest: /opt/docker/healthchecks/docker-compose.yml
+        mode: '0664'
+        owner: root
+        group: root
+
+    - name: Start the healthchecks database server
+      become: True
+      shell:
+        cmd: "docker compose up -d healthchecks-db"
+        chdir: /opt/docker/traefik
+
+    - name: Wait for the database container to come up
+      ansible.builtin.pause:
+        seconds: 30
+        minutes: 1
+
+    - name: Start all the other containers
+      become: True
+      shell:
+        cmd: "docker compose up -d --force-recreate"
+        chdir: /opt/docker/traefik
+
+    - name: Show how a user can be created
+      ansible.builtin.pause:
+        prompt: "docker compose run healthchecks-app ./manage.py createsuperuser"
