@@ -1,0 +1,38 @@
+---
+- name: Install Healtchecks instance
+  hosts: docker
+  remote_user: root
+
+  vars_files:
+    - "secrets/{{ inventory_hostname }}.yml"
+
+  tasks:
+    - name: Create uptime kuma base directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /opt/docker/uptimekuma
+
+    - name: Create uptime kuma data directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /opt/docker/uptimekuma/data
+
+    - name: Deploy uptime kuma docker-compose.yml
+      ansible.builtin.template:
+        src: docker/uptimekuma/docker-compose.yml.j2
+        dest: /opt/docker/uptimekuma/docker-compose.yml
+        mode: '0664'
+        owner: root
+        group: root
+
+    - name: Start all the other containers
+      become: True
+      shell:
+        cmd: "docker compose up -d --force-recreate"
+        chdir: /opt/docker/uptimekuma

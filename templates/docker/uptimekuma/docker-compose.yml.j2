@@ -1,0 +1,26 @@
+version: '3.3'
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma
+    container_name: uptime-kuma
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./data:/app/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.uptime.entrypoints=https"
+      - "traefik.http.routers.uptime.rule=Host(`{{ uptimekuma_fqdn }}`)"
+      - "traefik.http.routers.uptime.tls=true"
+      - "traefik.http.routers.uptime.tls.certresolver=http"
+      - "traefik.http.routers.uptime.middlewares=default@file"
+      - "traefik.http.routers.uptime.service=uptime"
+      - "traefik.http.services.uptime.loadbalancer.server.port=3001"
+      - "traefik.docker.network=proxy"
+    networks:
+      - proxy
+networks:
+  proxy:
+    external: true
