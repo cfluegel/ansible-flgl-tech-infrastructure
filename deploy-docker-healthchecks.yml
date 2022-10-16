@@ -43,7 +43,7 @@
       become: True
       shell:
         cmd: "docker compose up -d healthchecks-db"
-        chdir: /opt/docker/traefik
+        chdir: /opt/docker/healthchecks
 
     - name: Wait for the database container to come up
       ansible.builtin.pause:
@@ -54,7 +54,7 @@
       become: True
       shell:
         cmd: "docker compose up -d --force-recreate"
-        chdir: /opt/docker/traefik
+        chdir: /opt/docker/healthchecks
 
     - name: Show how a user can be created
       ansible.builtin.pause:
