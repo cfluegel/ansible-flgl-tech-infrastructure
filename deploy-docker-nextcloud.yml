@@ -100,3 +100,14 @@
     #   shell:
     #     cmd: "docker compose up -d --force-recreate"
     #     chdir: "{{ docker_base_dir }}/{{ nextcloud_instance }}"
+
+    - name: Create crontab entry for the nextcloud instance
+      ansible.builtin.cron:
+        user: root
+        state: present
+        minute: '*/5'
+        hour: '*'
+        day: '*'
+        month: '*'
+        weekday: '*'
+        job: "docker exec -u www-data {{ nextcloud_instance }}-nextcloud-app-1 php cron.php"
