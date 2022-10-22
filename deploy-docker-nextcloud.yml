@@ -103,6 +103,7 @@
 
     - name: Create crontab entry for the nextcloud instance
       ansible.builtin.cron:
+        name: Nextcloud Crontab
         user: root
         state: present
         minute: '*/5'
