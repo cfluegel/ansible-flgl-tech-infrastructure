@@ -34,17 +34,19 @@ In my old setup I use a Hetzner storage box to store my backups. I use BorgBacku
 ### Docker and why I switched to it...
 I am in the process of converting my Nextcloud and Webserver playbooks to docker based deployments. Why? Yeah, that is indeed a good question. The apache+suexec+php deployment works okay and it still allows me to provide access to other persons, but I feel that the container based deployment might be easier in the future. I am still new to "how to deploy and work with container setups" which is why this is also a way for me to learn more about the topic.
 
-I decided against roles for now. The ```deploy-docker-base.yml``` is the starting point. All other ``deploy-docker-*.yml``` require the steps from that playbook. Keep that in mind. I will convert the different ```deploy-docker-*.yml```files into roles but it is easier to have deployable playbooks without the extra layer of complexity right now.
+I decided against roles for now. The ```deploy-docker-base.yml``` is the starting point. All other ``deploy-docker-*.yml``` require the steps from that playbook. Keep that in mind. I will convert the different ```deploy-docker-*.yml```files into roles but it is easier to have deployable playbooks without the extra layer of complexity right now. Thanks to Christian from [goNeuland](https://goneuland.de/) for creating such excellent instructions about docker and containerized deployments. Go check his website out and maybe donate some money.
 
-My soon to be filled [blog](https://blog.flgl.tech) is setup as a static website docker container. I utilize Github Workflow to autogenerate a new docker image on every new git push to the gituhb repository. When used in conjunction with Watchtower, which checks and recreate a docker deployment, my site will be updated in regular intervals.
+My soon to be filled [blog](https://blog.flgl.tech) is setup as a static website docker container. I utilize Github Workflow to autogenerate a new docker image on every new git push to the gituhb repository. When used in conjunction with Watchtower, which checks and recreate a docker deployment, my site will be updated in regular intervals. Although I am still debating if a simple cronjob might not be better suited...
 
-### General thoughts
+### Security
 
 The SSHd PasswordAuthentication is set to no on each host. This is done with the deploy-base-configuration.yml and ensures a base security. Some of my SSH Keys are deployed during this step as well.
 
+The docker host is monitored by local [Crowdsec](https://www.crowdsec.net/) instance and secured with the firewall bouncer. Additionally, the traefik proxy uses the same list to stop unwanted access on the http/https route. I am sure the firewall bouncer, which I installed later, would be enough but I am still in the process of understanding Crowdsec :) I might add crowdsec to each and every host and let them talk to eachother.
+
 ### Matrix
 
-For Matrix I will use the ansible playbook from this Github repo https://github.com/spantaleev/matrix-docker-ansible-deploy. I will not build my own playbook.
+For Matrix I will use the ansible playbook from this Github repo https://github.com/spantaleev/matrix-docker-ansible-deploy. I will not build my own playbook, but I have to find a way to integrate it into my 
 
 ### Mailcow - Mailserver
 
