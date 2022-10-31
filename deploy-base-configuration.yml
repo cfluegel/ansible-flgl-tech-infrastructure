@@ -84,6 +84,7 @@
           - ufw
           - fail2ban
           - curl
+          - jq
       tags:
         - installation
         - packages
