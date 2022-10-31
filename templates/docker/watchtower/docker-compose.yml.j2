@@ -6,17 +6,18 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /etc/localtime:/etc/localtime:ro
     environment:
-      - WATCHTOWER_MONITOR_ONLY=true          # Wenn gesetzt dann wird nur benachrichtig
+#       - WATCHTOWER_MONITOR_ONLY=true          # Wenn gesetzt dann wird nur benachrichtig
       - WATCHTOWER_NOTIFICATION_URL={{docker_watchtower_notification_url}}
 # Nachfolgende zeilen emöglichen das Update und neustart von ausgewählten Containern
 # Die Auswahl erfolgt mithilfe des Labels (siehe unten) Dieser muss bei allen Container gesetzt
-# werden, welche automatisiert um 4 Uhr aktualisiert werden sollen.
-#      - WATCHTOWER_LABEL_ENABLE=true         # Hiermit aktivieren wir, dass nur explizit definierte Services aktualisiert wird.
+# werden
+      - WATCHTOWER_POLL_INTERVAL=21600
+      - WATCHTOWER_LABEL_ENABLE=true         # Hiermit aktivieren wir, dass nur explizit definierte Services aktualisiert wird.
 #      - WATCHTOWER_SCHEDULE=0 0 4 * * *       # Hier anpassen. Im Beispiel: Jede Nacht um 04:00 Uhr
 #      - WATCHTOWER_CLEANUP=false              # Mit dieser Option werden nach dem Start des neuen Images die alten entfernt
-#      - WATCHTOWER_INCLUDE_RESTARTING=true    # Hiermit wird der Neustart konfiguriert.
-#      - WATCHTOWER_ROLLING_RESTART=true       # Restart nacheinander durchführen
+      - WATCHTOWER_INCLUDE_RESTARTING=true    # Hiermit wird der Neustart konfiguriert.
+      - WATCHTOWER_ROLLING_RESTART=true       # Restart nacheinander durchführen
 #      - WATCHTOWER_INCLUDE_STOPPED=false      # Erstellte und verlassene Container mit einbeziehen
 
-#    labels:
-#      - "com.centurylinklabs.watchtower.enable=true"
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
