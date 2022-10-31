@@ -83,10 +83,14 @@
       ansible.builtin.shell:
         cmd: "docker inspect traefik"
       register: docker__nextcloud_traefik_ip
+      tags:
+        - docker-compose
 
     - name: Extract the traefik ip address
       set_fact:
         docker__nextcloud_gateway: "{{ docker__nextcloud_traefik_ip | regex_search('\"IPAddress\": \"(\\d+.\\d+.\\d+.\\d+)\"','\\1')  }}"
+      tags:
+        - docker-compose
 
     - name: Deploy the Nextcloud docker-compose.yml
       ansible.builtin.template:
@@ -95,6 +99,8 @@
         owner: root
         group: root
         mode: '0664'
+      tags:
+        - docker-compose
 
     # - name: Run Nextcloud docker compose
     #   shell:

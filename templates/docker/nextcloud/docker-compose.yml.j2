@@ -61,7 +61,7 @@ services:
     volumes:
       - ./data/nextcloud/app:/var/www/html
       - ./data/nextcloud/data:/var/www/html/data
-      - /var/log/nextcloud.log:/var/www/html/data/nextcloud.log:ro
+      - /var/log/crowdsec/nextcloud/nextcloud.log:/var/www/html/data/nextcloud.log
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.{{ nextcloud_traefik_name }}.entrypoints=https"
@@ -78,36 +78,42 @@ services:
       - proxy
       - {{ nextcloud_internal_networkname }}
 
-  nextcloud-collabora:
-    image: collabora/code
-    # container_name: collabora_app
-    networks:
-      - proxy
-    cap_add:
-      - MKNOD
-    # expose:
-    #   - 9980
-    environment:
-      - domain={{ nextcloud_fqdn }}                                   # Gebt hier eure Nextcloud Domain an. Wenn ihr dies nicht nutzt, dann entfernt diese Zeile
-      - username={{ nextcloud_collabora_username }}                   # Nutzername eingeben
-      - password={{ nextcloud_collabora_password }}                   # Passwort eingeben
-      - "extra_params=--o:ssl.enable=false --o:ssl.termination=true"
-    restart: unless-stopped
+#  nextcloud-collabora:
+#    image: collabora/code
+#    # container_name: collabora_app
+#    volumes:
+#      - /etc/localtime:/etc/localtime:ro
+#      - /etc/timezone:/etc/timezone:ro
+#    networks:
+#      - proxy
+#    cap_add:
+#      - MKNOD
+#    # expose:
+#    #   - 9980
+#    environment:
+#      # Gebt hier eure Nextcloud Domain an. Wenn ihr dies nicht nutzt, dann entfernt diese Zeile
+#      - aliasgroup1=https://{{ nextcloud_fqdn }}:443
+#      # Nutzername eingeben
+#      - username={{ nextcloud_collabora_username }}
+#      # Passwort eingeben
+#      - password={{ nextcloud_collabora_password }}
+#      - "extra_params=--o:ssl.enable=false --o:ssl.termination=true"
+#    restart: unless-stopped
 
-    labels:
-      - "traefik.enable=true"
-      # - "traefik.http.routers.collabora.entrypoints=http"
-      # - "traefik.http.routers.collabora.rule=Host(`{{ nextcloud_collabora_fqdn }}`)"  #URL anpassen
-      # - "traefik.http.middlewares.collabora-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.collabora.middlewares=collabora-https-redirect"
-      - "traefik.http.routers.collabora-secure.entrypoints=https"
-      - "traefik.http.routers.collabora-secure.rule=Host(`{{ nextcloud_collabora_fqdn }}`)"  #URL anpassen
-      - "traefik.http.routers.collabora-secure.tls=true"
-      - "traefik.http.routers.collabora-secure.tls.certresolver=http"
-      - "traefik.http.routers.collabora-secure.service=collabora"
-      - "traefik.http.services.collabora.loadbalancer.server.port=9980"
-      - "traefik.docker.network=proxy"
-      - "traefik.http.routers.collabora-secure.middlewares=secHeaders@file"
+#    labels:
+#      - "traefik.enable=true"
+#      # - "traefik.http.routers.collabora.entrypoints=http"
+#      # - "traefik.http.routers.collabora.rule=Host(`{{ nextcloud_collabora_fqdn }}`)"  #URL anpassen
+#      # - "traefik.http.middlewares.collabora-https-redirect.redirectscheme.scheme=https"
+#      - "traefik.http.routers.collabora.middlewares=collabora-https-redirect"
+#      - "traefik.http.routers.collabora-secure.entrypoints=https"
+#      - "traefik.http.routers.collabora-secure.rule=Host(`{{ nextcloud_collabora_fqdn }}`)"  #URL anpassen
+#      - "traefik.http.routers.collabora-secure.tls=true"
+#      - "traefik.http.routers.collabora-secure.tls.certresolver=http"
+#      - "traefik.http.routers.collabora-secure.service=collabora"
+#      - "traefik.http.services.collabora.loadbalancer.server.port=9980"
+#      - "traefik.docker.network=proxy"
+#      - "traefik.http.routers.collabora-secure.middlewares=secHeaders@file"
 
 networks:
   proxy:

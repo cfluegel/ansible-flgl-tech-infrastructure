@@ -31,10 +31,18 @@ nextcloud_fqdn: cloud.flgl.tech
 nextcloud_traefik_name: nextcloud
 nextcloud_internal_networkname: default
 
-# the following variables are set in the secured docker variable file 
+nextcloud_collabora_fqdn: collabora.flgl.tech
+# admin url https://collabora.flgl.tech/browser/dist/admin/admin.html
+
+
+# the following variables are set in the secured docker variable file
 # nextcloud_smtp_host:
 # nextcloud_smtp_secure:
 # nextcloud_smtp_username:
 # nextcloud_smtp_password:
 # nextcloud_smtp_mail_from:
 # nextcloud_smtp_domain:    # might not be necessary when mail_from is used .. have to verfiy
+
+healthchecks_fqdn: hc.flgl.tech
+
+uptimekuma_fqdn: kuma.flgl.tech
