@@ -1,20 +1,40 @@
 version: '3.9'
 
 services:
-  blog:
-    image: cfluegel/blog-flgl-tech:latest
+  blogflgltech:
+    image: cfluegel/website-blog-flgl-tech:latest
+    container_name: sw-blogflgltech
     restart: unless-stopped
     labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.blogflgltech.entrypoints=https"
-        - "traefik.http.routers.blogflgltech.rule=(Host(`blog.flgl.tech`))"
-        - "traefik.http.routers.blogflgltech.tls=true"
-        - "traefik.http.routers.blogflgltech.tls.certresolver=http"
-        - "traefik.http.routers.blogflgltech.service=blogflgltech"
-        - "traefik.http.services.blogflgltech.loadbalancer.server.port=80"
+        - "traefik.http.routers.siteblogflgltech.entrypoints=https"
+        - "traefik.http.routers.siteblogflgltech.rule=(Host(`blog.flgl.tech`))"
+        - "traefik.http.routers.siteblogflgltech.tls=true"
+        - "traefik.http.routers.siteblogflgltech.tls.certresolver=http"
+        - "traefik.http.routers.siteblogflgltech.service=siteblogflgltech"
+        - "traefik.http.services.siteblogflgltech.loadbalancer.server.port=80"
         - "traefik.docker.network=proxy"
+        - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - proxy
+
+  flgltech:
+    image: cfluegel/website-flgl-tech:latest
+    container_name: sw-flgltech
+    restart: unless-stopped
+    labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.siteflgltech.entrypoints=https"
+        - "traefik.http.routers.siteflgltech.rule=(Host(`flgl.tech`))"
+        - "traefik.http.routers.siteflgltech.tls=true"
+        - "traefik.http.routers.siteflgltech.tls.certresolver=http"
+        - "traefik.http.routers.siteflgltech.service=siteflgltech"
+        - "traefik.http.services.siteflgltech.loadbalancer.server.port=80"
+        - "traefik.docker.network=proxy"
+        - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - proxy
+
 
 networks:
   proxy:

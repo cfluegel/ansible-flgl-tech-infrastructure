@@ -24,6 +24,11 @@
         group: root
         mode: '0664'
 
+    - name: Run docker compose pull (for updating or initial download)
+      shell:
+        cmd: "docker compose pull"
+        chdir: /opt/docker/staticwebsites
+
     # - name: Run docker compose
     #   shell:
     #     cmd: "docker compose up -d --force-recreate"
