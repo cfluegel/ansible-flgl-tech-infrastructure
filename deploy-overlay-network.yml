@@ -29,47 +29,56 @@
 
     - name: Create Wireguard Conf directory if it does not exists
       ansible.builtin.file:
-        path: /etc/wireguard
-      register: check_wg_confdir
-      tags:
-        - check
-        - configuartion
-
-    - name: Check if Wireguard Private Key for the Backup already exists
-      ansible.builtin.stat:
         state: directory
         owner: root
         group: root
         mode: '0700'
-        path: /etc/wireguard/overlay_privatekey
+        path: /etc/wireguard
+      when: check_wg_confdir.stat.exists != True
+      tags:
+        - check
+        - configuartion
+
+    - name: Remove private and publickey, when we shall start from scratch
+      ansible.builtin.file:
+        path: '{{ item }}'
+        state: absent
+      loop:
+        - /etc/wireguard/{{ overlaynetworkname }}_privatekey
+        - /etc/wireguard/{{ overlaynetworkname }}_publickey
       when:
-        - check_wg_confdir.stat.exists != True
+        - overlaynetwork_recreate_force
       tags:
         - keycreation
         - configuartion
 
-    - name: Check if Wireguard Public Key for the Backup already exists
+    - name: Check if the Wireguard Private Key for the overlay network exists
       ansible.builtin.stat:
-        path: /etc/wireguard/overlay_privatekey
-      register: check_wg_pubkey
+        path: /etc/wireguard/{{ overlaynetworkname }}_privatekey
+      register: check_wg_privatekey
       tags:
         - keycreation
         - configuartion
+
+    - name: Check if the Wireguard Public Key for the overlay network exists
+      ansible.builtin.stat:
+        path: /etc/wireguard/{{ overlaynetworkname }}_publickey
+      register: check_wg_publickey
 
     - name: Create Wireguard Private Key
       ansible.builtin.shell:
-        cmd: wg genkey > /etc/wireguard/overlay_privatekey
+        cmd: /usr/bin/wg genkey > /etc/wireguard/{{ overlaynetworkname }}_privatekey
       when:
-        - check_wg_privkey.stat.exists != True
+        - check_wg_privatekey.stat.exists != True
       tags:
         - keycreation
         - configuartion
 
     - name: Create Wireguard Public Key
       ansible.builtin.shell:
-        cmd: wg pubkey < /etc/wireguard/overlay_privatekey > /etc/wireguard/overlay_publickey
+        cmd: /usr/bin/wg pubkey < /etc/wireguard/{{ overlaynetworkname }}_privatekey > /etc/wireguard/{{ overlaynetworkname }}_publickey
       when:
-        - check_wg_pubkey.stat.exists != True
+        - check_wg_publickey.stat.exists != True
       tags:
         - keycreation
         - configuartion
@@ -80,8 +89,8 @@
         path: '{{ item }}'
         state: file
       loop:
-        - /etc/wireguard/overlay_privatekey
-        - /etc/wireguard/overlay_publickey
+        - /etc/wireguard/{{ overlaynetworkname }}_privatekey
+        - /etc/wireguard/{{ overlaynetworkname }}_publickey
       tags:
         - keycreation
         - configuartion
@@ -92,11 +101,11 @@
 
   tasks:
     - name: Read and register public wireguard key
-      ansible.builtin.shell: cat /etc/wireguard/overlay_publickey
+      ansible.builtin.shell: cat /etc/wireguard/{{ overlaynetworkname }}_publickey
       register: wg_public_key
 
     - name: Read and register public wireguard key
-      ansible.builtin.shell: cat /etc/wireguard/overlay_privatekey
+      ansible.builtin.shell: cat /etc/wireguard/{{ overlaynetworkname }}_privatekey
       register: wg_private_key
 
     - name: Output the public Wireguard Key of each host
@@ -107,12 +116,20 @@
       ansible.builtin.debug:
         var: wg_private_key.stdout
 
-    - name: Find own IP for the overlay network
+
+- name: Find out the internal network ids
+  hosts: overlaynetwork
+  remote_user: root
+
+  tasks:
+    - name: DNS Request to acquire the internal ip
       ansible.builtin.set_fact:
-        overlay_network_ip: "{{ lookup('community.general.dig', inventory_hostname + '.overlay.flgl.network.' , 'qtype=A') }} "
+        overlay_network_ip: "{{ lookup('community.general.dig', inventory_hostname + '.' + overlaynetworkname + '.flgl.network.' , 'qtype=A') }} "
       tags:
         - dnslookup
-    - ansible.builtin.debug:
+
+    - name: Debug Output of the found ip
+      ansible.builtin.debug:
         var: overlay_network_ip
       tags:
         - dnslookup
@@ -130,8 +147,18 @@
         owner: root
         group: root
         mode: '0600'
+      when: inventory_hostname in groups['overlaynetwork']
+      register: check_wg_wg0config
       tags:
-        - configuration
+        - generateConfig
+
+    - name: Remove wg0.conf if host is not in overlaynetwork group
+      ansible.builtin.file:
+        state: absent
+        path: /etc/wireguard/wg0.conf
+      when: inventory_hostname not in groups['overlaynetwork']
+      tags:
+        - generateConfig
 
     - name: Enable the wireguard quick service for wg0.conf
       ansible.builtin.service:

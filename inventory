@@ -6,7 +6,6 @@ all:
     webserver:
       hosts:
         www.fluegel.cloud:
-        www1.flgl.tech:
     mailcow:
       hosts:
         mail.flgl.tech:
@@ -16,16 +15,26 @@ all:
     nextcloud:
       hosts:
         www.fluegel.cloud:
-    www-multi-tenant:
-      hosts:
-        www1.flgl.tech:
+    # www-multi-tenant:
+    #   hosts:
     overlaynetwork:
       hosts:
-        www1.flgl.tech:
         matrix.flgl.tech:
-        www.fluegel.cloud:
         mail.flgl.tech:
         dns1.flgl.tech:
+        docker01.flgl.tech:
     docker:
       hosts:
         docker01.flgl.tech:
+    dockerswarm:
+      hosts:
+        # ehemals testbed1.flgl.tech (188.68.57.102)
+        m1.s1.flgl.tech:
+        # m2.s1.flgl.tech:
+        # m3.s1.flgl.tech:
+        # ehemals www1.flgl.tech (185.183.156.98)
+        w1.s1.flgl.tech:
+        # 46.38.244.64
+        w2.s1.flgl.tech:
+        # 185.244.192.26
+        w3.s1.flgl.tech:
