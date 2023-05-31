@@ -54,6 +54,23 @@ services:
     networks:
       - proxy
 
+  macgillivray:
+    image: cfluegel/website-macgillivray-de:latest
+    container_name: sw-macgillivray
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.macgillivray.entrypoints=https"
+      - "traefik.http.routers.macgillivray.rule=(Host(`www.macgillivray.de`,`macgillivray.de`))"
+      - "traefik.http.routers.macgillivray.tls=true"
+      - "traefik.http.routers.macgillivray.tls.certresolver=http"
+      - "traefik.http.routers.macgillivray.service=macgillivray"
+      - "traefik.http.services.macgillivray.loadbalancer.server.port=80"
+      - "traefik.docker.network=proxy"
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks:
+      - proxy
+
 networks:
   proxy:
     external: true
