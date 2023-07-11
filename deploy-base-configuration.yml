@@ -16,6 +16,8 @@
         - sshpubkeys/cfluegelipad
         - sshpubkeys/securitykey1
         - sshpubkeys/windows11
+        - sshpubkeys/blackyubikey
+        - sshpubkeys/blueyubikey
       tags:
         - configuration
         - sshkeys
@@ -40,6 +42,8 @@
         - sshpubkeys/cfluegelipad
         - sshpubkeys/securitykey1
         - sshpubkeys/windows11
+        - sshpubkeys/blackyubikey
+        - sshpubkeys/blueyubikey
       tags:
         - configuration
         - sshkeys
