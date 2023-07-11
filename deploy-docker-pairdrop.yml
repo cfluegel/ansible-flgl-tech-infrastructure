@@ -1,0 +1,29 @@
+---
+- name: Install Dockerized Pairdrop
+  hosts: docker
+  remote_user: root
+
+  vars_files:
+    - "secrets/{{ inventory_hostname }}.yml"
+
+  tasks:
+    - name: Create Pairdrop directory
+      ansible.builtin.file:
+        owner: root
+        group: root
+        mode: '0775'
+        state: directory
+        path: /opt/docker/pairdrop
+
+    - name: Deploy the Pairdrop docker-compose.yml
+      ansible.builtin.template:
+        src: docker/pairdrop/docker-compose.yml.j2
+        dest: /opt/docker/pairdrop/docker-compose.yml
+        owner: root
+        group: root
+        mode: '0664'
+
+    - name: Run Pairdrop docker compose
+      shell:
+        cmd: "docker compose up -d --force-recreate"
+        chdir: /opt/docker/pairdrop

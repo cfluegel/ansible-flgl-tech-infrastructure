@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  pairdrop:
+    restart: always
+    container_name: 'pairdrop'
+    image: lscr.io/linuxserver/pairdrop:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pairdrop.entrypoints=https"
+      - "traefik.http.routers.pairdrop.rule=(Host(`{{ pairdrop_fqdn }}`))"
+      - "traefik.http.routers.pairdrop.tls=true"
+      - "traefik.http.routers.pairdrop.tls.certresolver=http"
+      - "traefik.http.routers.pairdrop.service=pairdrop"
+      - "traefik.http.services.pairdrop.loadbalancer.server.port=3000"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.pairdrop.middlewares=default@file"
+    environment:
+      - PUID={{ pairdrop_uid }}
+      - PGID={{ pairdrop_gid }}
+      - TZ=Europe/Berlin
+      - RATE_LIMIT=false #optional
+      - WS_FALLBACK=false #optional
+      - RTC_CONFIG= #optional
+      - DEBUG_MODE=false #optional
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

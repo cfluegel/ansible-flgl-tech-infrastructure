@@ -46,3 +46,9 @@ nextcloud_collabora_fqdn: collabora.flgl.tech
 healthchecks_fqdn: hc.flgl.tech
 
 uptimekuma_fqdn: kuma.flgl.tech
+
+
+# Pairdrop
+pairdrop_fqdn: "pairdrop.flgl.tech"
+pairdrop_uid: 1000
+pairdrop_gid: 1000
