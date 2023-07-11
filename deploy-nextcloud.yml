@@ -6,7 +6,7 @@
     - "secrets/{{ inventory_hostname }}.yml"
 
   roles:
-    - geerlingguy.certbot
+    - certbot-with-expand
 
 - hosts: nextcloud
   remote_user: root
@@ -146,6 +146,11 @@
     # Apache commands
     - name: Activate new virtual host
       ansible.builtin.shell: a2ensite nextcloud.conf
+      tags:
+        - configuration
+        - apache
+    - name: Deactivate default Site
+      ansible.builtin.shell: a2ensite 000-default.conf
       tags:
         - configuration
         - apache
