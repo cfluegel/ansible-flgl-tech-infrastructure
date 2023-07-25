@@ -5,6 +5,7 @@ dns_default_refresh: 43200
 dns_default_retry: 3600
 dns_default_expire: 604800
 dns_default_negativ_ttl: 3600
+dns_default_slave_provider: "empty"
 
 dns_acls:
   - name: hetzner
@@ -20,6 +21,13 @@ dns_acls:
       - 213.133.100.98
 
 slave_servers:
-  - "ns1.first-ns.de"
-  - "robotns2.second-ns.de"
-  - "robotns3.second-ns.com"
+  hetzner:
+    - "ns1.first-ns.de"
+    - "robotns2.second-ns.de"
+    - "robotns3.second-ns.com"
+  hetzner2:
+    - hydrogen.ns.hetzner.com
+    - oxygen.ns.hetzner.com
+    - helium.ns.hetzner.de
+  netcup: []
+  empty: []

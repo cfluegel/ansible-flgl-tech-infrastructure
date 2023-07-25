@@ -28,6 +28,11 @@
 {% else %}
 {% set slaveservers = slave_servers %}
 {% endif %}
+{% if item.provider is defined %}
+{% set provider = item.provider %}
+{% else %}
+{% set provider = dns_default_slave_provider %}
+{% endif %}
 $TTL 3600
 @   IN  SOA   {{ ansible_fqdn }}. {{ dns_mailadmin | replace('@','.') }}. (
           {{ versionnumber }}
@@ -41,8 +46,9 @@ $TTL 3600
 ; Server Adresse von diesem Server
 @                 IN NS       {{ ansible_fqdn }}.
 
-; Hetzner Hostname nach Kauf zusaetzlicher Domain Option
-{% for server in slaveservers %}
+
+{% for server in slaveservers[provider] %}
+; Slave Servers für {{ provider }} einfügen
 @                 IN NS       {{ server }}.
 {% endfor %}
 
